@@ -1,5 +1,5 @@
 .pageContainer {
-  overlay: flex;
+  display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: start;
@@ -7,10 +7,13 @@
 }
 
 .buttonContainer {
-  overlay: flex;
+  display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: start;
+  justify-content: end;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  width: 100%;
 }
 
 .mapContainer {
@@ -25,14 +28,23 @@
 
 .timelineContainer {
   width: 90vw;
-  height: 25vh;
+  height: 22vh;
   margin-right: 8px;
   margin-left: 8px;
   overflow: auto;
 }
 
 .pinButton {
-  margin-left: 8px;
+  padding: 8px;
+  background-color: #ffffff;
+  border: 4px;
+  border-color: #787878;
+  color: #787878;
+  text-align: center;
+  display: inline-block;
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 5px; /* Add rounded corners */
 }
 
 .popupContainer {
@@ -44,6 +56,10 @@
   background-color: #ffffff; 
   border: 1px solid #d3d3d3;
   padding: 8px;
+}
+
+.caption {
+  color: #787878;
 }
 
 .photo {

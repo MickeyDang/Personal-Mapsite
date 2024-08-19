@@ -1,18 +1,31 @@
 import mapboxgl from "mapbox-gl";
 import { CombinedMapModel, EventModel } from "./types";
 
+const latlngEquals = (a: String, b: String) => {
+  const n = Number(a);
+  const m = Number(b);
+  return n === m || n === 180 + (180 + m) || m === 180 + (180 + n);
+};
+
 export const compareMarkerLatLng = (
   value: mapboxgl.Marker,
-  marker: mapboxgl.Marker,
+  eventMapModel: CombinedMapModel,
 ) => {
   return (
-    value.getLngLat().lng == marker.longitude &&
-    value.getLngLat().lat == marker.latitude
+    latlngEquals(
+      Number(value.getLngLat().lng).toPrecision(10),
+      Number(eventMapModel.longitude).toPrecision(10),
+    ) &&
+    latlngEquals(
+      Number(value.getLngLat().lat).toPrecision(10),
+      Number(eventMapModel.latitude).toPrecision(10),
+    ),
   );
 };
 
-export const compareMapModelLatLng = (a: CombinedMapModel, b: EventModel) =>
-  a.longitude == b.longitude && a.latitude == b.latitude;
+export const compareMapModelLatLng = (a: CombinedMapModel, b: EventModel) => {
+  return a.longitude == b.longitude && a.latitude == b.latitude;
+};
 
 export const removePopups = (m: mapboxgl.Marker) => {
   if (m.getPopup()) {

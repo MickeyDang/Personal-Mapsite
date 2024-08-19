@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AssetType, EventModel } from "../pages/data/types";
+import { EventModel } from "../pages/data/types";
 import styles from "../styles/SelectedMoment.module.css";
 
 interface SelectedMomentProps {
@@ -11,14 +11,16 @@ const SelectedMoment: React.FC<SelectedMomentProps> = ({ event, onExpandImage })
   const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
-    if (event.assetType === AssetType.Photo) {
+    if (event.photoPointerSrc) {
       const fetchImage = async () => {
         try {
-          const response = await fetch(`/api/image?key=${event.assetSrc}`);
+          const response = await fetch(`/api/image?key=${event.photoPointerSrc}`);
 
           if (response.status == 200) {
             const data = await response.json();
-            setImageUrl(data.imageUrl);
+            if (data) {
+              setImageUrl(data.imageUrl);
+            }
           } else {
             const reason = await response.json();
             console.error(
@@ -45,9 +47,16 @@ const SelectedMoment: React.FC<SelectedMomentProps> = ({ event, onExpandImage })
 
   return (
     <div className={styles.container}>
-      {event.assetType == AssetType.Photo && (
+      {event.linkSrc && (
         <>
-          <p className={styles.text}>{event.description}</p>
+          <a target="_blank" href={event.linkSrc}>
+            {event.linkTitle ?? "Link"}
+          </a>
+        </>
+      )}
+      <p className={styles.text}>{event.description}</p>
+      {imageUrl && (
+        <>
           {imageUrl && (
             <img
               className={styles.photo}
@@ -56,14 +65,6 @@ const SelectedMoment: React.FC<SelectedMomentProps> = ({ event, onExpandImage })
               onClick={() => { onExpandImage(imageUrl); }}
             />
           )}
-        </>
-      )}
-      {event.assetType == AssetType.Link && (
-        <>
-          <a target="_blank" href={event.assetSrc}>
-            {event.title}
-          </a>
-          <p className={styles.text}>{event.description}</p>
         </>
       )}
       <p>{formatTime(event.time)}</p>

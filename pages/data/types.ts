@@ -1,9 +1,3 @@
-export enum AssetType {
-  None,
-  Link,
-  Photo,
-}
-
 export enum Tag {
   Content = "#EB5757",
   Project = "#BB6BD9",
@@ -22,8 +16,9 @@ export type EventModel = {
   tags: Tag[];
   time: Date;
   description: string;
-  assetSrc?: string;
-  assetType: AssetType;
+  linkTitle?: string;
+  linkSrc?: string;
+  photoPointerSrc?: string;
 };
 
 export type CombinedMapModel = {

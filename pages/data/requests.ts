@@ -34,14 +34,6 @@ export const getAssetTypeEnum = (value: String) => {
   }
 };
 
-export const getAssetSrc = (fields) => {
-  if (getAssetTypeEnum(fields.AssetType) === AssetType.Link) {
-    return fields.Link;
-  } else {
-    return fields.Title;
-  }
-};
-
 export const convertResponseToEventModel = (data) => {
   const moments: EventModel[] = data.map((e) => {
     return {
@@ -50,8 +42,9 @@ export const convertResponseToEventModel = (data) => {
       longitude: e.fields.Longitude.toFixed(8) as number,
       tags: getTags(e.fields.Tags),
       time: new Date(e.fields.Date),
-      assetType: getAssetTypeEnum(e.fields.AssetType),
-      assetSrc: getAssetSrc(e.fields),
+      linkTitle: e.fields.LinkTitle,
+      linkSrc: e.fields.Link,
+      photoPointerSrc: e.fields.Title,
       description: e.fields.Description,
     };
   });

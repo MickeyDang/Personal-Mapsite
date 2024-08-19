@@ -29,6 +29,7 @@ import {
   configureMarkerColour,
   removePopups,
 } from "./data/mapUtils";
+import SelectedMomentModal from "../components/SelectedMomentModal";
 
 /**
  * TODOs:
@@ -60,7 +61,9 @@ const Home: NextPage = () => {
   };
 
   const handlePrev = () => {
-    setSelectedEventIdx((selectedEventIdx - 1) % eventsModel.length);
+    if (selectedEventIdx > 0) {
+      setSelectedEventIdx((selectedEventIdx - 1) % eventsModel.length);
+    }
   };
 
   const handleImageExpanded = (imageUrl: string) => {
@@ -156,14 +159,15 @@ const Home: NextPage = () => {
     const map = mapRef.current;
     if (!map) return;
 
-    const eventMapModel = eventsMapModel.find((value: CombinedMapModel) =>
+    const eventMapModel = eventsMapModel.find((value: CombinedMapModel) => 
       compareMapModelLatLng(value, eventsModel[selectedEventIdx]),
     );
     if (!eventMapModel) return;
-
+    
     const mapMarker = mapMarkers.current.find((value: mapboxgl.Marker) =>
       compareMarkerLatLng(value, eventMapModel),
     );
+    
     // Skip if unable to find map marker or if the map marker is already showing a popup
     if (!mapMarker || (mapMarker.getPopup() && mapMarker.getPopup().isOpen()))
       return;
@@ -210,15 +214,11 @@ const Home: NextPage = () => {
       {expandedImageUrl && (
         <>
           <div className={styles.modalOverlay}></div>
-          <div className={styles.expandedImage}>
-            <img className={styles.photo} src={expandedImageUrl} />
-            <button
-              className={styles.closeButton}
-              onClick={handleImageCollapsed}
-            >
-              X
-            </button>
-          </div>
+          <SelectedMomentModal 
+            event={eventsModel[selectedEventIdx]}
+            expandedImageUrl={expandedImageUrl}
+            onImageCollapse={handleImageCollapsed}
+          />
         </>
       )}
       <div className={styles.pageContainer}>
@@ -249,7 +249,7 @@ const Home: NextPage = () => {
                 formatter={(value) => {
                   switch (value) {
                     case "numEvents":
-                      return "Number of Moments";
+                      return "Moments";
                     default:
                       return value;
                   }
@@ -266,10 +266,10 @@ const Home: NextPage = () => {
         </div>
         <div className={styles.buttonContainer}>
           <button className={styles.pinButton} onClick={handlePrev}>
-            Previous
+            {"<"}
           </button>
           <button className={styles.pinButton} onClick={handleNext}>
-            Next
+            {">"}
           </button>
         </div>
       </div>

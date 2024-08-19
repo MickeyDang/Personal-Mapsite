@@ -14,6 +14,7 @@ const COLUMNS = [
   "Link",
   "AssetType",
   "Tags",
+  "LinkTitle",
 ];
 
 const base = new Airtable({ apiKey: ACCESS_TOKEN }).base(

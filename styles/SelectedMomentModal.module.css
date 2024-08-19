@@ -1,0 +1,44 @@
+.caption {
+  color: #787878;
+  margin-left: 4px;
+}
+
+.photo {
+  max-width: 100%; 
+  max-height: 100%;
+  object-fit: cover; 
+  border-radius: 8px;
+}
+
+.expandedImage {
+  position: absolute;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 8px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 90%;
+  max-height: 90%;
+  z-index: 9999;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+.closeButton {
+  position: fixed; 
+  top: 10px;
+  right: 10px; 
+  background-color: transparent;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.singleLine {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+}
