@@ -7,7 +7,7 @@ interface PopupContentProps {
   events: EventModel[];
   numEvents: number;
   onMomentSelected: (event: EventModel) => void;
-  onExpandImage: (imageUrl: string) => void;
+  onExpandImage: (imageUrls: string[]) => void;
 }
 
 const PopupContent: React.FC<PopupContentProps> = ({ events, numEvents, onMomentSelected, onExpandImage }) => {

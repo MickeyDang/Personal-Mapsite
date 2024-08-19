@@ -4,22 +4,29 @@ import styles from "../styles/SelectedMoment.module.css";
 
 interface SelectedMomentProps {
   event: EventModel;
-  onExpandImage: (imageUrl: string) => void;
+  onExpandImage: (imageUrls: string[]) => void;
 }
 
-const SelectedMoment: React.FC<SelectedMomentProps> = ({ event, onExpandImage }) => {
-  const [imageUrl, setImageUrl] = useState("");
+const SelectedMoment: React.FC<SelectedMomentProps> = ({
+  event,
+  onExpandImage,
+}) => {
+  const [imageUrls, setImageUrls] = useState<string[] | string>("");
 
   useEffect(() => {
     if (event.photoPointerSrc) {
       const fetchImage = async () => {
         try {
-          const response = await fetch(`/api/image?key=${event.photoPointerSrc}`);
-
+          const response = await fetch(
+            `/api/image?key=${event.photoPointerSrc}`,
+          );
           if (response.status == 200) {
             const data = await response.json();
             if (data) {
-              setImageUrl(data.imageUrl);
+              console.log(JSON.stringify(data));
+              setImageUrls(data.imageUrls);
+            } else {
+              setImageUrls([]);
             }
           } else {
             const reason = await response.json();
@@ -31,11 +38,11 @@ const SelectedMoment: React.FC<SelectedMomentProps> = ({ event, onExpandImage })
           console.error("Error fetching image:", error);
         }
       };
-      if (!imageUrl) {
+      if (!imageUrls) {
         fetchImage();
       }
     }
-  }, [imageUrl]);
+  }, [imageUrls]);
 
   const formatTime = (time) =>
     Intl.DateTimeFormat("en-US", {
@@ -55,17 +62,15 @@ const SelectedMoment: React.FC<SelectedMomentProps> = ({ event, onExpandImage })
         </>
       )}
       <p className={styles.text}>{event.description}</p>
-      {imageUrl && (
-        <>
-          {imageUrl && (
-            <img
-              className={styles.photo}
-              src={imageUrl}
-              alt={event.description}
-              onClick={() => { onExpandImage(imageUrl); }}
-            />
-          )}
-        </>
+      {imageUrls && imageUrls.length > 0 && (
+        <img
+          className={styles.photo}
+          src={imageUrls[0]}
+          alt={event.description}
+          onClick={() => {
+            onExpandImage(imageUrls);
+          }}
+        />
       )}
       <p>{formatTime(event.time)}</p>
     </div>

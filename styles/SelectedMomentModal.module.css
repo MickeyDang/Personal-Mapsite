@@ -1,13 +1,14 @@
 .caption {
   color: #787878;
   margin-left: 4px;
+  margin-right: 4px;
 }
 
 .photo {
-  max-width: 100%; 
-  max-height: 100%;
+  width: 100%;
+  height: auto;
   object-fit: cover; 
-  border-radius: 8px;
+  border-radius: 4px;
 }
 
 .expandedImage {
@@ -18,10 +19,10 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 95%;
+  max-height: 95%;
   z-index: 9999;
-  overflow-y: hidden;
+  overflow-y: scroll;
   overflow-x: hidden;
 }
 
@@ -41,4 +42,11 @@
   flex-direction: row;
   justify-content: start;
   align-items: center;
+}
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr)); /* Adjust minmax values as needed */
+  grid-gap: 10px; /* Adjust spacing as needed */
+  border-radius: 8px;
 }

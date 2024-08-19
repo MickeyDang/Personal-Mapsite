@@ -1,4 +1,4 @@
-import { AssetType, EventModel, Tag } from "./types";
+import { EventModel, Tag } from "./types";
 
 export const getTags = (tags: String[]) => {
   return tags.map(tag => {
@@ -21,17 +21,6 @@ export const getTags = (tags: String[]) => {
         return Tag.None;
     }
   });
-};
-
-export const getAssetTypeEnum = (value: String) => {
-  switch (value) {
-    case "Link":
-      return AssetType.Link;
-    case "Photo":
-      return AssetType.Photo;
-    default:
-      return AssetType.None;
-  }
 };
 
 export const convertResponseToEventModel = (data) => {

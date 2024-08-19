@@ -12,7 +12,6 @@ const COLUMNS = [
   "Longitude",
   "Latitude",
   "Link",
-  "AssetType",
   "Tags",
   "LinkTitle",
 ];

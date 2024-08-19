@@ -50,7 +50,7 @@ const Home: NextPage = () => {
   const [eventsTimelineModel, setEventsTimelineModel] = useState<
     CombinedTimelineModel[]
   >([]);
-  const [expandedImageUrl, setExpandedImageUrl] = useState("");
+  const [expandedImageUrls, setExpandedImageUrls] = useState<string[]>([]);
 
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainer = useRef<any>(null);
@@ -66,12 +66,12 @@ const Home: NextPage = () => {
     }
   };
 
-  const handleImageExpanded = (imageUrl: string) => {
-    setExpandedImageUrl(imageUrl);
+  const handleImageExpanded = (imageUrls: string[]) => {
+    setExpandedImageUrls(imageUrls);
   };
 
   const handleImageCollapsed = () => {
-    setExpandedImageUrl("");
+    setExpandedImageUrls([]);
   };
 
   const handleBarClick = (data: any) => {
@@ -211,12 +211,12 @@ const Home: NextPage = () => {
 
   return (
     <>
-      {expandedImageUrl && (
+      {expandedImageUrls && expandedImageUrls.length > 0 && (
         <>
           <div className={styles.modalOverlay}></div>
           <SelectedMomentModal 
             event={eventsModel[selectedEventIdx]}
-            expandedImageUrl={expandedImageUrl}
+            expandedImageUrls={expandedImageUrls}
             onImageCollapse={handleImageCollapsed}
           />
         </>

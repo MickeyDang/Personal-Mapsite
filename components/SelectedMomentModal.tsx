@@ -4,15 +4,19 @@ import styles from "../styles/SelectedMomentModal.module.css";
 
 interface SelectedMomentModalProps {
   event: EventModel;
-  expandedImageUrl: string;
+  expandedImageUrls: string[];
   onImageCollapse: () => void;
 }
 
-const SelectedMomentModal: React.FC<SelectedMomentModalProps> = ({ event, expandedImageUrl, onImageCollapse }) => {
+const SelectedMomentModal: React.FC<SelectedMomentModalProps> = ({ event, expandedImageUrls, onImageCollapse }) => {
   
   return (
     <div className={styles.expandedImage}>
-      <img className={styles.photo} src={expandedImageUrl} />
+      <div className={styles.photoGrid}>
+        {expandedImageUrls.map((imageUrl: string, index: number) => (
+          <img key={index} className={styles.photo} src={imageUrl} alt={`Photo ${index + 1}`} />
+        ))}
+      </div>
       <div className={styles.singleLine}>
           <p className={styles.caption}>
             {event.description}
