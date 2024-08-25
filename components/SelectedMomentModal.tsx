@@ -1,5 +1,5 @@
 import React from "react";
-import { EventModel } from "../pages/data/types";
+import { EventModel } from "../data/types";
 import styles from "../styles/SelectedMomentModal.module.css";
 
 interface SelectedMomentModalProps {

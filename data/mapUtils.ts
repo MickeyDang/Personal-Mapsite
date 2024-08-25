@@ -19,7 +19,7 @@ export const compareMarkerLatLng = (
     latlngEquals(
       Number(value.getLngLat().lat).toPrecision(10),
       Number(eventMapModel.latitude).toPrecision(10),
-    ),
+    )
   );
 };
 

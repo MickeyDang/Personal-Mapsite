@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { EventModel } from "../pages/data/types";
+import { EventModel } from "../data/types";
 import styles from "../styles/SelectedMoment.module.css";
 
 interface SelectedMomentProps {
@@ -11,7 +11,7 @@ const SelectedMoment: React.FC<SelectedMomentProps> = ({
   event,
   onExpandImage,
 }) => {
-  const [imageUrls, setImageUrls] = useState<string[] | string>("");
+  const [imageUrls, setImageUrls] = useState<string[] | null>(null);
 
   useEffect(() => {
     if (event.photoPointerSrc) {

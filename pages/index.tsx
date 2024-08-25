@@ -11,7 +11,7 @@ import {
   combineToMapFormat,
   combineToTimelineFormat,
   EventModel,
-} from "./data/types";
+} from "../data/types";
 import {
   BarChart,
   Bar,
@@ -22,13 +22,13 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { convertResponseToEventModel } from "./data/requests";
+import { convertResponseToEventModel } from "../data/requests";
 import {
   compareMapModelLatLng,
   compareMarkerLatLng,
   configureMarkerColour,
   removePopups,
-} from "./data/mapUtils";
+} from "../data/mapUtils";
 import SelectedMomentModal from "../components/SelectedMomentModal";
 
 /**

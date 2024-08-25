@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { EventModel } from "../pages/data/types";
+import { EventModel } from "../data/types";
 import MomentSelector from "./MomentSelector";
 import SelectedMoment from "./SelectedMoment";
 
