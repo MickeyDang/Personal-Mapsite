@@ -30,18 +30,8 @@ import {
   removePopups,
 } from "../data/mapUtils";
 import SelectedMomentModal from "../components/SelectedMomentModal";
+import TopBar from "../components/TopBar";
 
-/**
- * TODOs:
- * 1. Add a filter based on tags and level of minutia (maybe this affects bar chart colours too).
- * ~~2. Make the tooltip in bar chart more helpful (show "MMM, YYYY").~~
- * 3. Support multiple photos per memory and enable a drilldown flow after the popup to display a dynamic grid of photos (plus the original description).
- * 4. Make the styling of the popup, bar chart, next / previous buttons, and drilldown modal better.
- * 5. Add an overall "about" explainer for the project.
- * 6. Improve performance as the # of rows scales (might get hard to search & render popups).
- * 7. Add an MVP amount of data (maybe ~60 moments).
- * 8. Deploy and buy domain.
- */
 const Home: NextPage = () => {
   const [selectedEventIdx, setSelectedEventIdx] = useState(0);
   const [mapboxAccessToken, setMapboxAccessToken] = useState();
@@ -51,10 +41,15 @@ const Home: NextPage = () => {
     CombinedTimelineModel[]
   >([]);
   const [expandedImageUrls, setExpandedImageUrls] = useState<string[]>([]);
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainer = useRef<any>(null);
   const mapMarkers = useRef<mapboxgl.Marker[]>([]);
+
+  const handleFiltersSelected = (selectedFilters: string[]) => {
+    setSelectedFilters(selectedFilters);
+  };
 
   const handleNext = () => {
     setSelectedEventIdx((selectedEventIdx + 1) % eventsModel.length);
@@ -92,13 +87,30 @@ const Home: NextPage = () => {
     setSelectedEventIdx(index);
   };
 
+  const hasMatchingTag = (tags: string[], checks: string[]): boolean => {
+    for (const tag of tags) {
+      for (const check of checks) {
+        if (tag === check) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
   // Load data from Airtable and get mapbox access token safely
   useEffect(() => {
+    console.log(JSON.stringify(selectedFilters));
     const loadData = async () => {
       const response = await fetch("/api/airtable");
       const data = await response.json();
-
       const moments: EventModel[] = convertResponseToEventModel(data);
+      // const moments: EventModel[] = convertResponseToEventModel(data).filter(
+      //   (moment: EventModel) => {
+      //     return hasMatchingTag(moment.tags, selectedFilters);
+      //   },
+      // );
+
       setEventsModel(moments);
       setEventsMapModel(combineToMapFormat(moments));
       setEventsTimelineModel(combineToTimelineFormat(moments));
@@ -117,7 +129,7 @@ const Home: NextPage = () => {
     if (!mapboxgl.accessToken) {
       fetchToken();
     }
-  });
+  }, [selectedFilters]);
 
   // Init map, markers, listeners once data is properly fetched from API.
   useEffect(() => {
@@ -159,15 +171,15 @@ const Home: NextPage = () => {
     const map = mapRef.current;
     if (!map) return;
 
-    const eventMapModel = eventsMapModel.find((value: CombinedMapModel) => 
+    const eventMapModel = eventsMapModel.find((value: CombinedMapModel) =>
       compareMapModelLatLng(value, eventsModel[selectedEventIdx]),
     );
     if (!eventMapModel) return;
-    
+
     const mapMarker = mapMarkers.current.find((value: mapboxgl.Marker) =>
       compareMarkerLatLng(value, eventMapModel),
     );
-    
+
     // Skip if unable to find map marker or if the map marker is already showing a popup
     if (!mapMarker || (mapMarker.getPopup() && mapMarker.getPopup().isOpen()))
       return;
@@ -211,10 +223,11 @@ const Home: NextPage = () => {
 
   return (
     <>
+      <TopBar onFiltersSelected={handleFiltersSelected} />
       {expandedImageUrls && expandedImageUrls.length > 0 && (
         <>
           <div className={styles.modalOverlay}></div>
-          <SelectedMomentModal 
+          <SelectedMomentModal
             event={eventsModel[selectedEventIdx]}
             expandedImageUrls={expandedImageUrls}
             onImageCollapse={handleImageCollapsed}

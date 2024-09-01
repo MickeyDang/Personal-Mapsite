@@ -1,0 +1,37 @@
+.filterModal {
+  position: fixed;
+  top: 18%;
+  left: 86%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  z-index: 1000;
+}
+
+.filterGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  gap: 12px; /* Add spacing between grid items */
+  margin-bottom: 36px;
+}
+
+.filterItem {
+  display: flex;
+  align-items: center;
+}
+
+.filterItem label {
+  margin-left: 6px; /* Add spacing between checkbox and label */
+}
+
+.closeButton {
+  position: fixed; 
+  bottom: 10px;
+  right: 10px; 
+  background-color: transparent;
+  border: none;
+  padding: 10px 20px;
+  font-size: 8px;
+  cursor: pointer;
+}

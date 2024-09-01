@@ -1,0 +1,110 @@
+.topBar {
+  background-color: #ffffff; /* Choose your background color */
+  padding-left: 12px;
+  padding-right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed; /* Stick to the top */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100; /* Ensure it's above other content */
+}
+
+.profileImage {
+  width: 40px; /* Adjust the image size as needed */
+  height: 40px;
+  border-radius: 50%; /* Make it a circle */
+  margin-right: 10px; /* Add some spacing between the image and text */
+}
+
+.meSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 10;
+}
+
+.meSection h2 {
+  font-family: 'Roboto', sans-serif;
+}
+
+.filterSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.aboutSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.filterSection button,
+.aboutSection button {
+  padding: 8px;
+  background-color: #ffffff;
+  border-width: 0px;
+  color: #787878;
+  text-align: center;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.filterSection button:hover,
+.aboutSection button:hover {
+  background-color: #EFEFEF;
+}
+
+.socialSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  margin-right: 12px;
+}
+
+.socialSection a { 
+  margin-right: 12px; 
+}
+
+.aboutModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  padding: 24px;
+  width: 50%;
+  height: 20%;
+  border-radius: 6px;
+  z-index: 1000;
+}
+
+.closeButton {
+  position: fixed; 
+  top: 10px;
+  right: 10px; 
+  background-color: transparent;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.modalOverlay {
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); 
+  z-index: 999; 
+  pointer-events: none; 
+}
