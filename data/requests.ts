@@ -1,20 +1,20 @@
 import { EventModel, Tag } from "./types";
 
 export const getTags = (tags: String[]) => {
-  return tags.map(tag => {
+  return tags.map((tag) => {
     switch (tag) {
-      case "Content":
-        return Tag.Content;
+      case "Literature":
+        return Tag.Literature;
       case "Project":
         return Tag.Project;
-      case "Realization":
-        return Tag.Realization;
       case "Nature":
         return Tag.Nature;
       case "Urbanism":
         return Tag.Urbanism;
-      case "Habit":
-        return Tag.Habit;
+      case "Work":
+        return Tag.Work;
+      case "Hobby":
+        return Tag.Hobby;
       case "Travel":
         return Tag.Travel;
       default:
@@ -38,5 +38,5 @@ export const convertResponseToEventModel = (data) => {
     };
   });
 
-  return moments.sort((a,b) => a.time.getTime() - b.time.getTime());
+  return moments.sort((a, b) => a.time.getTime() - b.time.getTime());
 };

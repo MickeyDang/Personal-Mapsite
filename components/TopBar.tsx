@@ -5,9 +5,10 @@ import FilterModal from './FilterModal';
 
 interface TopBarProps {
   onFiltersSelected: (selectedFilters: string[]) => void; 
+  initialFilters: string[];
 }
 
-const TopBar: React.FC<TopBarProps> = ({onFiltersSelected}) => {
+const TopBar: React.FC<TopBarProps> = ({onFiltersSelected, initialFilters}) => {
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
   
@@ -21,7 +22,7 @@ const TopBar: React.FC<TopBarProps> = ({onFiltersSelected}) => {
   };
   
   const handleFilterClick = () => {
-    setShowFilterModal(true);
+    setShowFilterModal(!showFilterModal);
   };
   
   return (
@@ -33,7 +34,7 @@ const TopBar: React.FC<TopBarProps> = ({onFiltersSelected}) => {
       <div className={styles.filterSection}>
         <button onClick={handleFilterClick}>Filter</button>
         {showFilterModal && (
-          <FilterModal onClose={handleFilterModalClose} />
+          <FilterModal onClose={handleFilterModalClose} initialFilters={initialFilters}/>
         )}
       </div>
       <div className={styles.aboutSection}>

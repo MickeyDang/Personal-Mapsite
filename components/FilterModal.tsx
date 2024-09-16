@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import styles from '../styles/FilterModal.module.css';
+import { Tag } from '../data/types';
 
 interface FilterModalProps {
   onClose: (selectedFilters: string[]) => void; 
+  initialFilters: string[];
 }
 
-const FilterModal: React.FC<FilterModalProps> = ({ onClose }) => {
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+const FilterModal: React.FC<FilterModalProps> = ({ onClose, initialFilters }) => {
+  const [selectedFilters, setSelectedFilters] = useState<string[]>(initialFilters);
   const handleCheckboxChange = (filter: string) => {
     if (selectedFilters.includes(filter)) {
       setSelectedFilters(selectedFilters.filter((f) => f !== filter));
@@ -15,14 +17,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ onClose }) => {
     }
   };
   
-  const filters = [
-    'Nature',
-    'Literature',
-    'Urbanism',
-    'Projects',
-    'Food',
-    'Work',
-  ];
+  const filters = Object.keys(Tag).filter(key => isNaN(Number(key)) && key !== "None");
   
   return (
     <div className={styles.filterModal}>

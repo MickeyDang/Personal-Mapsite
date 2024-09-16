@@ -11,6 +11,7 @@ import {
   combineToMapFormat,
   combineToTimelineFormat,
   EventModel,
+  mapStringToTag,
 } from "../data/types";
 import {
   BarChart,
@@ -101,15 +102,17 @@ const Home: NextPage = () => {
   // Load data from Airtable and get mapbox access token safely
   useEffect(() => {
     console.log(JSON.stringify(selectedFilters));
+
     const loadData = async () => {
       const response = await fetch("/api/airtable");
       const data = await response.json();
-      const moments: EventModel[] = convertResponseToEventModel(data);
-      // const moments: EventModel[] = convertResponseToEventModel(data).filter(
-      //   (moment: EventModel) => {
-      //     return hasMatchingTag(moment.tags, selectedFilters);
-      //   },
-      // );
+
+      const selectedTags = mapStringToTag(selectedFilters);
+      const moments: EventModel[] = convertResponseToEventModel(data).filter(
+        (moment: EventModel) => {
+          return selectedTags.length === 0 || hasMatchingTag(moment.tags, selectedTags);
+        },
+      );
 
       setEventsModel(moments);
       setEventsMapModel(combineToMapFormat(moments));
@@ -122,10 +125,8 @@ const Home: NextPage = () => {
       setMapboxAccessToken(data.token);
     };
 
-    if (eventsModel.length === 0) {
-      loadData();
-    }
-
+    loadData();
+    
     if (!mapboxgl.accessToken) {
       fetchToken();
     }
@@ -144,25 +145,35 @@ const Home: NextPage = () => {
       });
     }
 
-    // Set all markers and listeners when clicked
-    if (mapRef.current) {
-      eventsMapModel.map((eventMapModel: CombinedMapModel) => {
-        const mapMarker = new mapboxgl.Marker({
-          color: configureMarkerColour(eventMapModel),
-        })
-          .setLngLat([eventMapModel.longitude, eventMapModel.latitude])
-          .addTo(mapRef.current);
-
-        mapMarker.getElement().addEventListener("click", (event) => {
-          event.stopPropagation();
-          const index = eventsModel.findIndex((value) =>
-            compareMapModelLatLng(eventMapModel, value),
-          );
-          setSelectedEventIdx(index);
-        });
-
-        mapMarkers.current.push(mapMarker);
+    const resetMap = () => {
+      mapMarkers.current.forEach(marker => {
+        marker.remove();
       });
+      mapMarkers.current = [];
+    }
+
+    const addNewMarkersToMap = (eventMapModel: CombinedMapModel) => {
+      const mapMarker = new mapboxgl.Marker({
+        color: configureMarkerColour(eventMapModel),
+      })
+        .setLngLat([eventMapModel.longitude, eventMapModel.latitude])
+        .addTo(mapRef.current);
+
+      mapMarker.getElement().addEventListener("click", (event) => {
+        event.stopPropagation();
+        const index = eventsModel.findIndex((value) =>
+          compareMapModelLatLng(eventMapModel, value),
+        );
+        setSelectedEventIdx(index);
+      });
+
+      mapMarkers.current.push(mapMarker);
+    };
+    
+    // Set all markers and click listeners
+    if (mapRef.current) {
+      resetMap();
+      eventsMapModel.map(addNewMarkersToMap);
     }
   }, [eventsModel, mapboxAccessToken]);
 
@@ -223,7 +234,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <TopBar onFiltersSelected={handleFiltersSelected} />
+      <TopBar onFiltersSelected={handleFiltersSelected} initialFilters={selectedFilters} />
       {expandedImageUrls && expandedImageUrls.length > 0 && (
         <>
           <div className={styles.modalOverlay}></div>

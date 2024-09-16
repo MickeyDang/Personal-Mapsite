@@ -1,10 +1,10 @@
 export enum Tag {
-  Content = "#EB5757",
+  Literature = "#EB5757",
   Project = "#BB6BD9",
   Nature = "#219653",
   Urbanism = "#6FCF97",
-  Realization = "#F2C94C",
-  Habit = "#2F80ED",
+  Work = "#F2C94C",
+  Hobby = "#2F80ED",
   Travel = "#F2994A",
   None = "#BDBDBD",
 }
@@ -35,6 +35,29 @@ export type CombinedTimelineModel = {
   numEvents: number;
 };
 
+export const mapStringToTag = (strings: string[]): Tag[] => {
+  return strings.map((string) => {
+    switch (string) {
+      case "Literature":
+        return Tag.Literature;
+      case "Project":
+        return Tag.Project;
+      case "Nature":
+        return Tag.Nature;
+      case "Urbanism":
+        return Tag.Urbanism;
+      case "Work":
+        return Tag.Work;
+      case "Hobby":
+        return Tag.Hobby;
+      case "Travel":
+        return Tag.Travel;
+      default:
+        return Tag.None;
+    }
+  });
+};
+
 export const combineToMapFormat = (
   events: EventModel[],
 ): CombinedMapModel[] => {
@@ -63,7 +86,7 @@ export const combineToTimelineFormat = (
   const combinedEventsMap = {};
   events.forEach((e) => {
     const key = `${e.time.getFullYear()},${e.time.getMonth()}`;
-    
+
     if (combinedEventsMap[key]) {
       combinedEventsMap[key].events.push(e);
       combinedEventsMap[key].numEvents++;
