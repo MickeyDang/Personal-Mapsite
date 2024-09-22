@@ -12,7 +12,7 @@ const SelectedMomentModal: React.FC<SelectedMomentModalProps> = ({ event, expand
   
   return (
     <div className={styles.expandedImage}>
-      <div className={styles.photoGrid}>
+      <div className={expandedImageUrls.length > 4 ? styles.photoGrid6x : styles.photoGrid4x }>
         {expandedImageUrls.map((imageUrl: string, index: number) => (
           <img key={index} className={styles.photo} src={imageUrl} alt={`Photo ${index + 1}`} />
         ))}

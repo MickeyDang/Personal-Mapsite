@@ -1,7 +1,7 @@
 .photo {
   max-width: 25vw; 
   max-height: 25vh; 
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .text {

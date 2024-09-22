@@ -43,7 +43,12 @@ const TopBar: React.FC<TopBarProps> = ({onFiltersSelected, initialFilters}) => {
           <>
             <div className={styles.aboutModal}>
               <button className={styles.closeButton} onClick={handleAboutModalClose}>X</button>
-              {/* Add your "About" content here */}
+              <h3>Hi there!</h3>
+              <p>Anyone who knows me well from university will know that I&apos;ve always had a soft spot for maps and geospatial data visualizations. I wanted this personal website to be an extension of that interest.</p>
+              <li>Here, you&apos;ll see a collection of &quot;lists&quot; that share a different peice of &quot;me&quot;: my favourite places, my outdoor & indoor hobbies, the projects I&apos;ve worked on, and subtle realizations.</li>
+              <li>Each story is represented both as a pin on a map and as a point in my past timeline.</li>
+              <p>You, lucky reader, can explore those little moments which I&apos;ve curated through space and time.</p>
+              <span className={styles.aboutTools}>Made with Next.js, Mapbox, and Airtable.</span>
             </div>
             <div className={styles.modalOverlay}></div>
           </>

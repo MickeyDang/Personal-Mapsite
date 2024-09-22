@@ -82,9 +82,14 @@
   background-color: #ffffff;
   padding: 24px;
   width: 50%;
-  height: 20%;
+  height: 25%;
   border-radius: 6px;
   z-index: 1000;
+  overflow-y: scroll;
+}
+
+.aboutTools {
+  font-size: 0.75rem;
 }
 
 .closeButton {

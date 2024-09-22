@@ -110,7 +110,10 @@ const Home: NextPage = () => {
       const selectedTags = mapStringToTag(selectedFilters);
       const moments: EventModel[] = convertResponseToEventModel(data).filter(
         (moment: EventModel) => {
-          return selectedTags.length === 0 || hasMatchingTag(moment.tags, selectedTags);
+          return (
+            selectedTags.length === 0 ||
+            hasMatchingTag(moment.tags, selectedTags)
+          );
         },
       );
 
@@ -126,7 +129,7 @@ const Home: NextPage = () => {
     };
 
     loadData();
-    
+
     if (!mapboxgl.accessToken) {
       fetchToken();
     }
@@ -146,11 +149,11 @@ const Home: NextPage = () => {
     }
 
     const resetMap = () => {
-      mapMarkers.current.forEach(marker => {
+      mapMarkers.current.forEach((marker) => {
         marker.remove();
       });
       mapMarkers.current = [];
-    }
+    };
 
     const addNewMarkersToMap = (eventMapModel: CombinedMapModel) => {
       const mapMarker = new mapboxgl.Marker({
@@ -169,7 +172,7 @@ const Home: NextPage = () => {
 
       mapMarkers.current.push(mapMarker);
     };
-    
+
     // Set all markers and click listeners
     if (mapRef.current) {
       resetMap();
@@ -234,7 +237,10 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <TopBar onFiltersSelected={handleFiltersSelected} initialFilters={selectedFilters} />
+      <TopBar
+        onFiltersSelected={handleFiltersSelected}
+        initialFilters={selectedFilters}
+      />
       {expandedImageUrls && expandedImageUrls.length > 0 && (
         <>
           <div className={styles.modalOverlay}></div>
@@ -248,53 +254,55 @@ const Home: NextPage = () => {
       <div className={styles.pageContainer}>
         <div ref={mapContainer} className={styles.mapContainer} />
         <div className={styles.timelineContainer}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={eventsTimelineModel}
-              margin={{
-                top: 20,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="barTime"
-                scale="time"
-                domain={["auto", "auto"]}
-                tickFormatter={(date) => format(date, "MMM yyyy")}
-              />
-              <YAxis />
-              <Tooltip
-                content={({ payload }) => <CustomTooltip payload={payload} />}
-              />
-              <Legend
-                formatter={(value) => {
-                  switch (value) {
-                    case "numEvents":
-                      return "Moments";
-                    default:
-                      return value;
-                  }
+          <div className={styles.chartContainer}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={eventsTimelineModel}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
                 }}
-              />
-              <Bar
-                dataKey="numEvents"
-                stackId="a"
-                fill="#8884d8"
-                onClick={(event: any) => handleBarClick(event)}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div className={styles.buttonContainer}>
-          <button className={styles.pinButton} onClick={handlePrev}>
-            {"<"}
-          </button>
-          <button className={styles.pinButton} onClick={handleNext}>
-            {">"}
-          </button>
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="barTime"
+                  scale="time"
+                  domain={["auto", "auto"]}
+                  tickFormatter={(date) => format(date, "MMM yyyy")}
+                />
+                <YAxis />
+                <Tooltip
+                  content={({ payload }) => <CustomTooltip payload={payload} />}
+                />
+                <Legend
+                  formatter={(value) => {
+                    switch (value) {
+                      case "numEvents":
+                        return "Moments";
+                      default:
+                        return value;
+                    }
+                  }}
+                />
+                <Bar
+                  dataKey="numEvents"
+                  stackId="a"
+                  fill="#8884d8"
+                  onClick={(event: any) => handleBarClick(event)}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className={styles.buttonContainer}>
+            <button className={styles.pinButton} onClick={handlePrev}>
+              {"<"}
+            </button>
+            <button className={styles.pinButton} onClick={handleNext}>
+              {">"}
+            </button>
+          </div>
         </div>
       </div>
     </>

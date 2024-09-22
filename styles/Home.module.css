@@ -6,19 +6,9 @@
   overflow: hidden;
 }
 
-.buttonContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: end;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  width: 100%;
-}
-
 .mapContainer {
   width: 99vw;
-  height: 67vh;
+  height: 70vh;
 }
 
 #map {
@@ -27,15 +17,33 @@
 }
 
 .timelineContainer {
-  width: 90vw;
-  height: 22vh;
+  width: 100%;
+  height: 25vh;
+  display: flex;
+  flex-direction: row;
+}
+
+.chartContainer {
+  flex: 9;
   margin-right: 8px;
   margin-left: 8px;
-  overflow: auto;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+  justify-content: start;
+  margin-left: 16px;
+  padding-bottom: 16px;
+  flex: 1;
 }
 
 .pinButton {
-  padding: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 16px;
+  padding-bottom: 16px;
   background-color: #ffffff;
   border-width: 0px;
   color: #787878;
