@@ -1,5 +1,25 @@
 import { EventModel, Tag } from "./types";
 
+export const fetchImageUrls = async (photoPointerSrc: String) => {
+  try {
+    const response = await fetch(`/api/image?key=${photoPointerSrc}`);
+    if (response.status == 200) {
+      const data = await response.json();
+      if (data) {
+        console.log(JSON.stringify(data));
+        return data.imageUrls;
+      } else {
+        return [];
+      }
+    } else {
+      const reason = await response.json();
+      console.error(`${response.status}. Reason: ${JSON.stringify(reason)}`);
+    }
+  } catch (error) {
+    console.error("Error fetching image:", error);
+  }
+};
+
 export const getTags = (tags: String[]) => {
   return tags.map((tag) => {
     switch (tag) {

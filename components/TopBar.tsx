@@ -16,9 +16,8 @@ const TopBar: React.FC<TopBarProps> = ({onFiltersSelected, initialFilters}) => {
     setShowAboutModal(false);
   };
   
-  const handleFilterModalClose = (selectedFilters: string[]) => {
+  const handleFilterChange = (selectedFilters: string[]) => {
     onFiltersSelected(selectedFilters);
-    setShowFilterModal(false);
   };
   
   const handleFilterClick = () => {
@@ -27,18 +26,20 @@ const TopBar: React.FC<TopBarProps> = ({onFiltersSelected, initialFilters}) => {
   
   return (
     <div className={styles.topBar}>
-      <div className={styles.meSection}>
-        <img src="./MickeyBoston.jpg" alt="Mickey" className={styles.profileImage} />
-        <h2>Mickey</h2>
-      </div>
       <div className={styles.filterSection}>
-        <button onClick={handleFilterClick}>Filter</button>
+        <button className={styles.filtersViewButton} onClick={handleFilterClick}>
+          {showFilterModal ? "X" : "Filters"}
+        </button>
         {showFilterModal && (
-          <FilterModal onClose={handleFilterModalClose} initialFilters={initialFilters}/>
+          <FilterModal onFilterChange={handleFilterChange} initialFilters={initialFilters}/>
         )}
       </div>
+      <div className={styles.meSection}>
+        <img src="./MickeyBoston.jpg" alt="Mickey" className={styles.profileImage} />
+        <h3>Mickey</h3>
+      </div>
       <div className={styles.aboutSection}>
-        <button onClick={() => setShowAboutModal(true)}>About</button>
+        <button className={styles.topBarButton} onClick={() => setShowAboutModal(true)}>About</button>
         {showAboutModal && (
           <>
             <div className={styles.aboutModal}>

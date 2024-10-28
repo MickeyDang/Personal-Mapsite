@@ -16,9 +16,9 @@ export type EventModel = {
   tags: Tag[];
   time: Date;
   description: string;
-  linkTitle?: string;
+  linkTitle: string;
   linkSrc?: string;
-  photoPointerSrc?: string;
+  photoPointerSrc: string;
 };
 
 export type CombinedMapModel = {

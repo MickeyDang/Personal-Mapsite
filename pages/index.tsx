@@ -23,7 +23,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { convertResponseToEventModel } from "../data/requests";
+import { convertResponseToEventModel, fetchImageUrls } from "../data/requests";
 import {
   compareMapModelLatLng,
   compareMarkerLatLng,
@@ -33,17 +33,26 @@ import {
 import SelectedMomentModal from "../components/SelectedMomentModal";
 import TopBar from "../components/TopBar";
 
-const Home: NextPage = () => {
-  const [selectedEventIdx, setSelectedEventIdx] = useState(0);
-  const [mapboxAccessToken, setMapboxAccessToken] = useState();
+const Home: NextPage = () => {  
+  // Event Model Setup
+  // TODO: turn into hashmap for better performance
   const [eventsModel, setEventsModel] = useState<EventModel[]>([]);
   const [eventsMapModel, setEventsMapModel] = useState<CombinedMapModel[]>([]);
   const [eventsTimelineModel, setEventsTimelineModel] = useState<
     CombinedTimelineModel[]
   >([]);
-  const [expandedImageUrls, setExpandedImageUrls] = useState<string[]>([]);
+  const [selectedEventIdx, setSelectedEventIdx] = useState(0);
+
+  // Filtering
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
+  // Modal Parameters
+  const [stackedEvents, setStackedEvents] = useState<EventModel[]>([]);
+  const [expandedImageUrls, setExpandedImageUrls] = useState<string[]>([]);
+  const [stackId, setStackId] = useState(0);
+
+  // Mapbox Parameters
+  const [mapboxAccessToken, setMapboxAccessToken] = useState();
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainer = useRef<any>(null);
   const mapMarkers = useRef<mapboxgl.Marker[]>([]);
@@ -62,12 +71,10 @@ const Home: NextPage = () => {
     }
   };
 
-  const handleImageExpanded = (imageUrls: string[]) => {
-    setExpandedImageUrls(imageUrls);
-  };
-
   const handleImageCollapsed = () => {
     setExpandedImageUrls([]);
+    setStackedEvents([]);
+    setStackId(0);
   };
 
   const handleBarClick = (data: any) => {
@@ -81,33 +88,60 @@ const Home: NextPage = () => {
     }
   };
 
-  const handleMomentSelectedFromPopup = (moment: EventModel) => {
+  const handleMomentSelectedFromPopup = async (moment: EventModel) => {
     const index = eventsModel.findIndex(
       (value: EventModel) => value.title === moment.title,
     );
+    const candidateEvent = eventsModel[index];
+
+    const eventStack = eventsMapModel.find(eventMapModel => compareMapModelLatLng(eventMapModel, candidateEvent));
+    const eventStackId = eventStack.events.findIndex(event => event.title === candidateEvent.title);
+
+    const imageUrls = await fetchImageUrls(eventStack.events[eventStackId].photoPointerSrc);
+    setExpandedImageUrls(imageUrls);
+    
+    setStackedEvents(eventStack.events);
+    setStackId(eventStackId);
     setSelectedEventIdx(index);
   };
 
-  const hasMatchingTag = (tags: string[], checks: string[]): boolean => {
-    for (const tag of tags) {
-      for (const check of checks) {
-        if (tag === check) {
-          return true;
-        }
-      }
-    }
-    return false;
+  const handleNextInStack = async () => {
+    const nextStackId = (stackId + 1) % stackedEvents.length;
+    const imageUrls = await fetchImageUrls(stackedEvents[nextStackId].photoPointerSrc);
+    
+    setExpandedImageUrls(imageUrls);
+    setStackId(nextStackId);
+  };
+
+  const handlePrevInStack = async () => {
+    const nextStackId = (stackId + 1) % stackedEvents.length;
+    const imageUrls = await fetchImageUrls(stackedEvents[nextStackId].photoPointerSrc);
+
+    setExpandedImageUrls(imageUrls);
+    setStackId(nextStackId);
   };
 
   // Load data from Airtable and get mapbox access token safely
   useEffect(() => {
     console.log(JSON.stringify(selectedFilters));
 
+    const hasMatchingTag = (tags: string[], checks: string[]): boolean => {
+      for (const tag of tags) {
+        for (const check of checks) {
+          if (tag === check) {
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+    
     const loadData = async () => {
       const response = await fetch("/api/airtable");
       const data = await response.json();
 
       const selectedTags = mapStringToTag(selectedFilters);
+      // Only store the events which have a tag matching the currently applied filters
       const moments: EventModel[] = convertResponseToEventModel(data).filter(
         (moment: EventModel) => {
           return (
@@ -217,9 +251,7 @@ const Home: NextPage = () => {
     ReactDOM.createRoot(document.getElementById("popup-container")!).render(
       <PopupContent
         events={eventMapModel.events}
-        numEvents={eventMapModel.numEvents}
         onMomentSelected={handleMomentSelectedFromPopup}
-        onExpandImage={handleImageExpanded}
       />,
     );
   }, [selectedEventIdx]);
@@ -245,9 +277,12 @@ const Home: NextPage = () => {
         <>
           <div className={styles.modalOverlay}></div>
           <SelectedMomentModal
-            event={eventsModel[selectedEventIdx]}
+            events={stackedEvents}
+            idx={stackId}
             expandedImageUrls={expandedImageUrls}
             onImageCollapse={handleImageCollapsed}
+            handleNext={handleNextInStack}
+            handlePrev={handlePrevInStack}
           />
         </>
       )}
