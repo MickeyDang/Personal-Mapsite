@@ -1,10 +1,9 @@
 export enum Tag {
   Literature = "#EB5757",
-  Project = "#BB6BD9",
   Nature = "#219653",
-  Urbanism = "#6FCF97",
+  Urbanism = "#9B51E0",
   Work = "#F2C94C",
-  Hobby = "#2F80ED",
+  Hobbies = "#2F80ED",
   Travel = "#F2994A",
   None = "#BDBDBD",
 }
@@ -40,16 +39,14 @@ export const mapStringToTag = (strings: string[]): Tag[] => {
     switch (string) {
       case "Literature":
         return Tag.Literature;
-      case "Project":
-        return Tag.Project;
       case "Nature":
         return Tag.Nature;
       case "Urbanism":
         return Tag.Urbanism;
       case "Work":
         return Tag.Work;
-      case "Hobby":
-        return Tag.Hobby;
+      case "Hobbies":
+        return Tag.Hobbies;
       case "Travel":
         return Tag.Travel;
       default:

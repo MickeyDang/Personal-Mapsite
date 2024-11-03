@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { EventModel } from "../data/types";
 import styles from "../styles/SelectedMomentModal.module.css";
 
@@ -24,9 +24,11 @@ const SelectedMomentModal: React.FC<SelectedMomentModalProps> = ({
   const imageStyle =
     expandedImageUrls.length > 4
       ? styles.photoGrid6x
-      : expandedImageUrls.length > 1
+      : expandedImageUrls.length > 3
         ? styles.photoGrid4x
-        : styles.photoGrid1x;
+        : expandedImageUrls.length > 1
+          ? styles.photoGrid3x
+          : styles.photoGrid1x;
 
   const containerStyle =
     expandedImageUrls.length > 1

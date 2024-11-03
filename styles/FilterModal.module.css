@@ -20,7 +20,7 @@
 }
 
 .filterItem.selected {
-  background-color: #E0E0FF80; /* Light purple color */
+  background-color: #b8b8e5; /* Light purple color */
 }
 
 .filterItem:hover, .filterItem.selected:hover{

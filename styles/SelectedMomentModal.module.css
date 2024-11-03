@@ -68,6 +68,13 @@
   border-radius: 8px;
 }
 
+.photoGrid3x {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(30%, 1fr));
+  grid-gap: 8px;
+  border-radius: 8px;
+}
+
 .photoGrid4x {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));

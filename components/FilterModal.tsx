@@ -37,9 +37,15 @@ const FilterModal: React.FC<FilterModalProps> = ({
     if (selectedFilters != initialFilters) {
       debounceTimeout.current = setTimeout(() => {
         onClose(selectedFilters);
-      }, 500); // 0.5 seconds delay
+      }, 400); // 0.4 seconds delay
     }
   }, [selectedFilters]);
+
+  const processFilterWords = (filter: string) => {
+    if (filter === "Literature") return "Read & Write";
+    if (filter === "Urbanism") return "Urban Pics";
+    return filter;
+  };
 
   return (
     <div className={styles.filterModal}>
@@ -53,7 +59,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
             ].join(" ")}
             onClick={() => handleFilterChange(filter)}
           >
-            {filter}
+            {processFilterWords(filter)}
           </button>
         ))}
       </div>
