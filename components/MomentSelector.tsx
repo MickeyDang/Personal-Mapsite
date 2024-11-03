@@ -31,7 +31,7 @@ const MomentSelector: React.FC<MomentSelectorProps> = ({
           className={styles.row}
           onClick={() => handleMomentSelected(idx)}
         >
-          <p>
+          <p className={styles.selectorText}>
             #{idx + 1}: {event.title} ({formatTime(event.time)})
           </p>
         </button>

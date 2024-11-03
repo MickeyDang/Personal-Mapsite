@@ -15,3 +15,7 @@
   font: inherit;
   cursor: pointer; 
 }
+
+.selectorText {
+  color: var(--primary-text-color-dark);
+}

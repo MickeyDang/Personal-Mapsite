@@ -27,7 +27,7 @@
 }
 
 .meSection h3 {
-  font-family: 'Roboto', sans-serif;
+  color: var(--primary-text-color-dark);
 }
 
 .aboutSection {
@@ -41,7 +41,7 @@
   padding: 8px;
   background-color: #ffffff;
   border-width: 0px;
-  color: #787878;
+  color: var(--primary-text-color-dark);
   text-align: start;
   display: inline-block;
   font-size: 14px;
@@ -59,24 +59,7 @@
 
 .socialSection a { 
   margin-right: 12px; 
-}
-
-.aboutModal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #ffffff;
-  padding: 24px;
-  width: 50%;
-  height: 25%;
-  border-radius: 6px;
-  z-index: 1000;
-  overflow-y: scroll;
-}
-
-.aboutTools {
-  font-size: 0.75rem;
+  color: var(--primary-text-color-dark);
 }
 
 .closeButton {
@@ -98,7 +81,6 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5); 
   z-index: 999; 
-  pointer-events: none; 
 }
 
 .filterSection {
@@ -107,7 +89,7 @@
   right: 12px;
   background-color: transparent;
   border-radius: 6px;
-  z-index: 1000;
+  z-index: 998;
   display: flex;
   flex-direction: row-reverse;
   justify-content: end;

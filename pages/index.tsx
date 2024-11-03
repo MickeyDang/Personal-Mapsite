@@ -275,12 +275,11 @@ const Home: NextPage = () => {
       />
       {expandedImageUrls && expandedImageUrls.length > 0 && (
         <>
-          <div className={styles.modalOverlay}></div>
+          <span onClick={handleImageCollapsed} className={styles.modalOverlay}></span>
           <SelectedMomentModal
             events={stackedEvents}
             idx={stackId}
             expandedImageUrls={expandedImageUrls}
-            onImageCollapse={handleImageCollapsed}
             handleNext={handleNextInStack}
             handlePrev={handlePrevInStack}
           />
@@ -306,8 +305,9 @@ const Home: NextPage = () => {
                   scale="time"
                   domain={["auto", "auto"]}
                   tickFormatter={(date) => format(date, "MMM yyyy")}
+                  tick={{ fill: '#343434' }}
                 />
-                <YAxis />
+                <YAxis tick={{ fill: '#343434' }}/>
                 <Tooltip
                   content={({ payload }) => <CustomTooltip payload={payload} />}
                 />
@@ -324,7 +324,7 @@ const Home: NextPage = () => {
                 <Bar
                   dataKey="numEvents"
                   stackId="a"
-                  fill="#8884d8"
+                  fill="#861313"
                   onClick={(event: any) => handleBarClick(event)}
                 />
               </BarChart>

@@ -95,17 +95,6 @@
   overflow-x: hidden;
 }
 
-.closeButton {
-  position: fixed; 
-  top: 10px;
-  right: 10px; 
-  background-color: transparent;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
 .modalOverlay {
   position: fixed; 
   top: 0;
@@ -114,5 +103,4 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5); 
   z-index: 1000; 
-  pointer-events: none; 
 }
