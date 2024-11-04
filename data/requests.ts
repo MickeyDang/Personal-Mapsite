@@ -6,7 +6,6 @@ export const fetchImageUrls = async (photoPointerSrc: String) => {
     if (response.status == 200) {
       const data = await response.json();
       if (data) {
-        console.log(JSON.stringify(data));
         return data.imageUrls;
       } else {
         return [];

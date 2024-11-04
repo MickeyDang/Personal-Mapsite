@@ -35,13 +35,16 @@ import TopBar from "../components/TopBar";
 
 const Home: NextPage = () => {  
   // Event Model Setup
-  // TODO: turn into hashmap for better performance
   const [eventsModel, setEventsModel] = useState<EventModel[]>([]);
   const [eventsMapModel, setEventsMapModel] = useState<CombinedMapModel[]>([]);
   const [eventsTimelineModel, setEventsTimelineModel] = useState<
     CombinedTimelineModel[]
   >([]);
   const [selectedEventIdx, setSelectedEventIdx] = useState(0);
+
+  // Cached Data
+  const cachedEvents: React.MutableRefObject<EventModel[]> = useRef(null);
+  //TODO: on each change to the event model, cache the mappings of titles and (LatLng) to event & map models, removing searching
 
   // Filtering
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
@@ -92,8 +95,9 @@ const Home: NextPage = () => {
     const index = eventsModel.findIndex(
       (value: EventModel) => value.title === moment.title,
     );
+    
     const candidateEvent = eventsModel[index];
-
+    
     const eventStack = eventsMapModel.find(eventMapModel => compareMapModelLatLng(eventMapModel, candidateEvent));
     const eventStackId = eventStack.events.findIndex(event => event.title === candidateEvent.title);
 
@@ -123,8 +127,6 @@ const Home: NextPage = () => {
 
   // Load data from Airtable and get mapbox access token safely
   useEffect(() => {
-    console.log(JSON.stringify(selectedFilters));
-
     const hasMatchingTag = (tags: string[], checks: string[]): boolean => {
       for (const tag of tags) {
         for (const check of checks) {
@@ -139,10 +141,14 @@ const Home: NextPage = () => {
     const loadData = async () => {
       const response = await fetch("/api/airtable");
       const data = await response.json();
+      cachedEvents.current = [...convertResponseToEventModel(data)];      
+      populateEventModels();
+    };
 
+    const populateEventModels = () => {
       const selectedTags = mapStringToTag(selectedFilters);
-      // Only store the events which have a tag matching the currently applied filters
-      const moments: EventModel[] = convertResponseToEventModel(data).filter(
+      
+      const moments: EventModel[] = cachedEvents.current.filter(
         (moment: EventModel) => {
           return (
             selectedTags.length === 0 ||
@@ -154,15 +160,19 @@ const Home: NextPage = () => {
       setEventsModel(moments);
       setEventsMapModel(combineToMapFormat(moments));
       setEventsTimelineModel(combineToTimelineFormat(moments));
-    };
-
+    }
+    
     const fetchToken = async () => {
       const response = await fetch("/api/mapbox");
       const data = await response.json();
       setMapboxAccessToken(data.token);
     };
 
-    loadData();
+    if (!cachedEvents.current) {
+      loadData();
+    } else {
+      populateEventModels();
+    }
 
     if (!mapboxgl.accessToken) {
       fetchToken();
@@ -310,16 +320,6 @@ const Home: NextPage = () => {
                 <YAxis tick={{ fill: '#343434' }}/>
                 <Tooltip
                   content={({ payload }) => <CustomTooltip payload={payload} />}
-                />
-                <Legend
-                  formatter={(value) => {
-                    switch (value) {
-                      case "numEvents":
-                        return "Moments";
-                      default:
-                        return value;
-                    }
-                  }}
                 />
                 <Bar
                   dataKey="numEvents"
