@@ -33,6 +33,9 @@ const SelectedMomentModal: React.FC<SelectedMomentModalProps> = ({
 
   return (
     <div className={containerStyle}>
+      <div className={styles.singleLine}>
+        <p className={styles.caption}>{event.time.toLocaleDateString()}</p>
+      </div>
       <div className={styles.buttonContainer}>
         {events.length > 1 && (
           <button className={styles.pinButton} onClick={handlePrev}>

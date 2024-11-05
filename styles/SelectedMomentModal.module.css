@@ -22,7 +22,7 @@
   max-height: 60%;
   z-index: 9999;
   overflow-x: hidden;
-  overflow-y: hidden;
+  overflow-y: scroll;
 }
 
 .litPreviewGrid {
