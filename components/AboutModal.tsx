@@ -8,7 +8,7 @@ const AboutModal: React.FC = () => {
       <p>
         Ever since entering university, I&apos;ve always had a soft spot for
         maps and geospatial data visualizations. I wanted this personal website
-        to be an example of that interest.
+        to be an extension of that interest.
       </p>
       <p>
         Here, you&apos;ll find a collection of lists that share a different
@@ -31,7 +31,7 @@ const AboutModal: React.FC = () => {
         through space and time.
       </p>
       <span className={styles.aboutTools}>
-        Made with Typescript, Next.js, Mapbox, and Airtable.
+        Made in 🇨🇦 with Typescript, Next.js, Mapbox, and Airtable.
       </span>
     </div>
   );

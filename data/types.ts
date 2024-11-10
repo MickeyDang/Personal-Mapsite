@@ -77,6 +77,8 @@ export const combineToMapFormat = (
   return Object.values<CombinedMapModel>(combinedEventsMap);
 };
 
+export const createBarTimeFromEvent = (e: EventModel) => new Date(e.time.getFullYear(), e.time.getMonth(), 1);
+
 export const combineToTimelineFormat = (
   events: EventModel[],
 ): CombinedTimelineModel[] => {
@@ -90,7 +92,7 @@ export const combineToTimelineFormat = (
     } else {
       combinedEventsMap[key] = {
         time: e.time,
-        barTime: new Date(e.time.getFullYear(), e.time.getMonth(), 1),
+        barTime: createBarTimeFromEvent(e),
         events: [e],
         numEvents: 1,
       };

@@ -10,6 +10,7 @@ import {
   CombinedTimelineModel,
   combineToMapFormat,
   combineToTimelineFormat,
+  createBarTimeFromEvent,
   EventModel,
   mapStringToTag,
 } from "../data/types";
@@ -20,7 +21,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 import { convertResponseToEventModel, fetchImageUrls } from "../data/requests";
@@ -33,7 +33,10 @@ import {
 import SelectedMomentModal from "../components/SelectedMomentModal";
 import TopBar from "../components/TopBar";
 
-const Home: NextPage = () => {  
+const barColor = "#FF7262";
+const selectedBarColor = "#CC1400";
+
+const Home: NextPage = () => {
   // Event Model Setup
   const [eventsModel, setEventsModel] = useState<EventModel[]>([]);
   const [eventsMapModel, setEventsMapModel] = useState<CombinedMapModel[]>([]);
@@ -41,6 +44,9 @@ const Home: NextPage = () => {
     CombinedTimelineModel[]
   >([]);
   const [selectedEventIdx, setSelectedEventIdx] = useState(0);
+
+  // Timeline Tracking
+  const [selectedBarIndex, setSelectedBarIndex] = useState<number>(0);
 
   // Cached Data
   const cachedEvents: React.MutableRefObject<EventModel[]> = useRef(null);
@@ -80,7 +86,7 @@ const Home: NextPage = () => {
     setStackId(0);
   };
 
-  const handleBarClick = (data: any) => {
+  const handleBarClick = (data: CombinedTimelineModel) => {
     const time = data.time;
     if (time) {
       eventsModel.forEach((value: EventModel, index: number) => {
@@ -95,15 +101,21 @@ const Home: NextPage = () => {
     const index = eventsModel.findIndex(
       (value: EventModel) => value.title === moment.title,
     );
-    
-    const candidateEvent = eventsModel[index];
-    
-    const eventStack = eventsMapModel.find(eventMapModel => compareMapModelLatLng(eventMapModel, candidateEvent));
-    const eventStackId = eventStack.events.findIndex(event => event.title === candidateEvent.title);
 
-    const imageUrls = await fetchImageUrls(eventStack.events[eventStackId].photoPointerSrc);
+    const candidateEvent = eventsModel[index];
+
+    const eventStack = eventsMapModel.find((eventMapModel) =>
+      compareMapModelLatLng(eventMapModel, candidateEvent),
+    );
+    const eventStackId = eventStack.events.findIndex(
+      (event) => event.title === candidateEvent.title,
+    );
+
+    const imageUrls = await fetchImageUrls(
+      eventStack.events[eventStackId].photoPointerSrc,
+    );
     setExpandedImageUrls(imageUrls);
-    
+
     setStackedEvents(eventStack.events);
     setStackId(eventStackId);
     setSelectedEventIdx(index);
@@ -111,15 +123,19 @@ const Home: NextPage = () => {
 
   const handleNextInStack = async () => {
     const nextStackId = (stackId + 1) % stackedEvents.length;
-    const imageUrls = await fetchImageUrls(stackedEvents[nextStackId].photoPointerSrc);
-    
+    const imageUrls = await fetchImageUrls(
+      stackedEvents[nextStackId].photoPointerSrc,
+    );
+
     setExpandedImageUrls(imageUrls);
     setStackId(nextStackId);
   };
 
   const handlePrevInStack = async () => {
     const nextStackId = (stackId + 1) % stackedEvents.length;
-    const imageUrls = await fetchImageUrls(stackedEvents[nextStackId].photoPointerSrc);
+    const imageUrls = await fetchImageUrls(
+      stackedEvents[nextStackId].photoPointerSrc,
+    );
 
     setExpandedImageUrls(imageUrls);
     setStackId(nextStackId);
@@ -137,17 +153,17 @@ const Home: NextPage = () => {
       }
       return false;
     };
-    
+
     const loadData = async () => {
       const response = await fetch("/api/airtable");
       const data = await response.json();
-      cachedEvents.current = [...convertResponseToEventModel(data)];      
+      cachedEvents.current = [...convertResponseToEventModel(data)];
       populateEventModels();
     };
 
     const populateEventModels = () => {
       const selectedTags = mapStringToTag(selectedFilters);
-      
+
       const moments: EventModel[] = cachedEvents.current.filter(
         (moment: EventModel) => {
           return (
@@ -160,8 +176,8 @@ const Home: NextPage = () => {
       setEventsModel(moments);
       setEventsMapModel(combineToMapFormat(moments));
       setEventsTimelineModel(combineToTimelineFormat(moments));
-    }
-    
+    };
+
     const fetchToken = async () => {
       const response = await fetch("/api/mapbox");
       const data = await response.json();
@@ -188,7 +204,7 @@ const Home: NextPage = () => {
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/light-v11",
         center: [-80.52, 43.46],
-        zoom: 5,
+        zoom: 2,
       });
     }
 
@@ -264,6 +280,15 @@ const Home: NextPage = () => {
         onMomentSelected={handleMomentSelectedFromPopup}
       />,
     );
+
+    // Update selected bar in the timeline
+    const candidateBarTime = createBarTimeFromEvent(
+      eventsModel[selectedEventIdx],
+    );
+    const eventsTimelineIndex = eventsTimelineModel.findIndex((value) => {
+      return value.barTime.getTime() == candidateBarTime.getTime();
+    });
+    setSelectedBarIndex(eventsTimelineIndex);
   }, [selectedEventIdx]);
 
   const CustomTooltip = ({ payload }) => {
@@ -285,7 +310,10 @@ const Home: NextPage = () => {
       />
       {expandedImageUrls && expandedImageUrls.length > 0 && (
         <>
-          <span onClick={handleImageCollapsed} className={styles.modalOverlay}></span>
+          <span
+            onClick={handleImageCollapsed}
+            className={styles.modalOverlay}
+          ></span>
           <SelectedMomentModal
             events={stackedEvents}
             idx={stackId}
@@ -315,17 +343,34 @@ const Home: NextPage = () => {
                   scale="time"
                   domain={["auto", "auto"]}
                   tickFormatter={(date) => format(date, "MMM yyyy")}
-                  tick={{ fill: '#343434' }}
+                  tick={{ fill: "#343434" }}
                 />
-                <YAxis tick={{ fill: '#343434' }}/>
+                <YAxis tick={{ fill: "#343434" }} />
                 <Tooltip
                   content={({ payload }) => <CustomTooltip payload={payload} />}
                 />
                 <Bar
                   dataKey="numEvents"
                   stackId="a"
-                  fill="#861313"
-                  onClick={(event: any) => handleBarClick(event)}
+                  fill={barColor}
+                  onClick={(event: CombinedTimelineModel) =>
+                    handleBarClick(event)
+                  }
+                  shape={(props) => {
+                    const { x, y, width, height } = props;
+                    const isSelected = (selectedBarIndex === props.index);
+                    return (
+                      <rect
+                        x={x}
+                        y={y}
+                        width={width}
+                        height={height}
+                        fill={isSelected ? selectedBarColor : barColor}
+                        stroke={isSelected ? selectedBarColor : barColor}
+                        strokeWidth={isSelected ? 3 : 1}
+                      />
+                    );
+                  }}
                 />
               </BarChart>
             </ResponsiveContainer>

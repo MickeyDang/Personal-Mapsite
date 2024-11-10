@@ -6,12 +6,53 @@
   gap: 6px;
 }
 
+.filterItem.nature {
+  background-color: #21965350;
+}
+.filterItem.nature.selected {
+  background-color: #219653;
+}
+
+.filterItem.literature {
+  background-color: #EB575750;
+}
+.filterItem.literature.selected {
+  background-color: #EB5757;
+}
+
+.filterItem.urbanism {
+  background-color: #9B51E050;
+}
+.filterItem.urbanism.selected {
+  background-color: #9B51E0;
+}
+
+.filterItem.work {
+  background-color: #F2C94C50;
+}
+.filterItem.work.selected {
+  background-color: #F2C94C;
+}
+
+.filterItem.hobbies {
+  background-color: #2F80ED50;
+}
+.filterItem.hobbies.selected {
+  background-color: #2F80ED;
+}
+
+.filterItem.travel {
+  background-color: #F2994A50;
+}
+.filterItem.travel.selected {
+  background-color: #F2994A;
+}
+
 .filterItem {
   margin-end: 6px;
   padding: 6px 12px; 
   min-width: 100px;
   border-radius: 48px;
-  background-color: #FEFEFE50; /* Default pill color */
   font-size: 14px;
   color: #787878;
   border: none; 
@@ -20,8 +61,8 @@
 }
 
 .filterItem.selected {
-  background-color: var(--primary-color-dark);
-  color: #EFEFEF;
+  color: #343434;
+  font-weight: 600;
 }
 
 .filterItem:hover, .filterItem.selected:hover{

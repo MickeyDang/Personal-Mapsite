@@ -46,7 +46,17 @@ const FilterModal: React.FC<FilterModalProps> = ({
     if (filter === "Urbanism") return "Urban Pics";
     return filter;
   };
+  
+  const getBgforFilter = (filter: string) => {
+    if (filter === "Literature") return styles.literature;
+    if (filter === "Urbanism") return styles.urbanism;
+    if (filter === "Nature") return styles.nature;
+    if (filter === "Work") return styles.work;
+    if (filter === "Hobbies") return styles.hobbies;
+    if (filter === "Travel") return styles.travel;
+  };
 
+  
   return (
     <div className={styles.filterModal}>
       <div className={styles.filterGrid}>
@@ -56,6 +66,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
             className={[
               styles.filterItem,
               selectedFilters.includes(filter) ? styles.selected : "",
+              getBgforFilter(filter),
             ].join(" ")}
             onClick={() => handleFilterChange(filter)}
           >

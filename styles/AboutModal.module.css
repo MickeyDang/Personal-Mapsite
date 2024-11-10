@@ -6,7 +6,7 @@
   background-color: #ffffff;
   padding: 24px;
   width: 50%;
-  height: 25%;
+  max-height: 40%;
   border-radius: 6px;
   z-index: 1000;
   overflow-y: scroll;

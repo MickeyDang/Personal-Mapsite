@@ -13,8 +13,7 @@ const TopBar: React.FC<TopBarProps> = ({
   onFiltersSelected,
   initialFilters,
 }) => {
-  const [showAboutModal, setShowAboutModal] = useState(false);
-  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showAboutModal, setShowAboutModal] = useState(true);
 
   const handleAboutModalClose = () => {
     setShowAboutModal(false);
@@ -28,25 +27,13 @@ const TopBar: React.FC<TopBarProps> = ({
     onFiltersSelected(selectedFilters);
   };
 
-  const handleFilterClick = () => {
-    setShowFilterModal(!showFilterModal);
-  };
-
   return (
     <div className={styles.topBar}>
       <div className={styles.filterSection}>
-        <button
-          className={styles.filtersViewButton}
-          onClick={handleFilterClick}
-        >
-          {showFilterModal ? "X" : "Lists"}
-        </button>
-        {showFilterModal && (
-          <FilterModal
-            onFilterChange={handleFilterChange}
-            initialFilters={initialFilters}
-          />
-        )}
+        <FilterModal
+          onFilterChange={handleFilterChange}
+          initialFilters={initialFilters}
+        />
       </div>
       <div className={styles.meSection}>
         <img
