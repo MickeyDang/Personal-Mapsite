@@ -4,7 +4,6 @@ import { useRef, useState, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import ReactDOM from "react-dom/client";
 import PopupContent from "../components/PopupContent";
-import { format } from "date-fns";
 import {
   CombinedMapModel,
   CombinedTimelineModel,
@@ -14,15 +13,6 @@ import {
   EventModel,
   mapStringToTag,
 } from "../data/types";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import { convertResponseToEventModel, fetchImageUrls } from "../data/requests";
 import {
   compareMapModelLatLng,
@@ -32,9 +22,7 @@ import {
 } from "../data/mapUtils";
 import SelectedMomentModal from "../components/SelectedMomentModal";
 import TopBar from "../components/TopBar";
-
-const barColor = "#FF7262";
-const selectedBarColor = "#CC1400";
+import EventsTimelineChart from "../components/EventsTimelineChart";
 
 const Home: NextPage = () => {
   // Event Model Setup
@@ -132,7 +120,11 @@ const Home: NextPage = () => {
   };
 
   const handlePrevInStack = async () => {
-    const nextStackId = (stackId + 1) % stackedEvents.length;
+    const nextStackId =
+      stackId > 0
+        ? (stackId - 1) % stackedEvents.length
+        : stackedEvents.length - 1;
+
     const imageUrls = await fetchImageUrls(
       stackedEvents[nextStackId].photoPointerSrc,
     );
@@ -291,17 +283,6 @@ const Home: NextPage = () => {
     setSelectedBarIndex(eventsTimelineIndex);
   }, [selectedEventIdx]);
 
-  const CustomTooltip = ({ payload }) => {
-    if (payload && payload.length) {
-      const label = payload[0].payload.time;
-      return (
-        <div className={styles.tooltip}>
-          <p>{format(new Date(label), "MMM yyyy")}</p>
-        </div>
-      );
-    }
-  };
-
   return (
     <>
       <TopBar
@@ -327,53 +308,11 @@ const Home: NextPage = () => {
         <div ref={mapContainer} className={styles.mapContainer} />
         <div className={styles.timelineContainer}>
           <div className={styles.chartContainer}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={eventsTimelineModel}
-                margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="barTime"
-                  scale="time"
-                  domain={["auto", "auto"]}
-                  tickFormatter={(date) => format(date, "MMM yyyy")}
-                  tick={{ fill: "#343434" }}
-                />
-                <YAxis tick={{ fill: "#343434" }} />
-                <Tooltip
-                  content={({ payload }) => <CustomTooltip payload={payload} />}
-                />
-                <Bar
-                  dataKey="numEvents"
-                  stackId="a"
-                  fill={barColor}
-                  onClick={(event: CombinedTimelineModel) =>
-                    handleBarClick(event)
-                  }
-                  shape={(props) => {
-                    const { x, y, width, height } = props;
-                    const isSelected = (selectedBarIndex === props.index);
-                    return (
-                      <rect
-                        x={x}
-                        y={y}
-                        width={width}
-                        height={height}
-                        fill={isSelected ? selectedBarColor : barColor}
-                        stroke={isSelected ? selectedBarColor : barColor}
-                        strokeWidth={isSelected ? 3 : 1}
-                      />
-                    );
-                  }}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+            <EventsTimelineChart
+              data={eventsTimelineModel}
+              handleBarClick={handleBarClick}
+              selectedBarIndex={selectedBarIndex}
+            />
           </div>
           <div className={styles.buttonContainer}>
             <button className={styles.pinButton} onClick={handlePrev}>
