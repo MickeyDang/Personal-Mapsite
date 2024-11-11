@@ -316,10 +316,10 @@ const Home: NextPage = () => {
           </div>
           <div className={styles.buttonContainer}>
             <button className={styles.pinButton} onClick={handlePrev}>
-              {"<"}
+              <img src="/prev.png" width={24} height={24} alt="Previous" />
             </button>
             <button className={styles.pinButton} onClick={handleNext}>
-              {">"}
+              <img src="/next.png" width={24} height={24} alt="Next" />
             </button>
           </div>
         </div>

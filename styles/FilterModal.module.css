@@ -1,6 +1,7 @@
 .filterGrid {
   display: flex;
   flex-direction: row-reverse;
+  flex-flow: row wrap;
   justify-content: end;
   align-items: center;
   gap: 6px;
@@ -9,6 +10,7 @@
 .filterItem.nature {
   background-color: #21965350;
 }
+
 .filterItem.nature.selected {
   background-color: #219653;
 }
@@ -16,6 +18,7 @@
 .filterItem.literature {
   background-color: #EB575750;
 }
+
 .filterItem.literature.selected {
   background-color: #EB5757;
 }
@@ -23,6 +26,7 @@
 .filterItem.urbanism {
   background-color: #9B51E050;
 }
+
 .filterItem.urbanism.selected {
   background-color: #9B51E0;
 }
@@ -30,6 +34,7 @@
 .filterItem.work {
   background-color: #F2C94C50;
 }
+
 .filterItem.work.selected {
   background-color: #F2C94C;
 }
@@ -37,6 +42,7 @@
 .filterItem.hobbies {
   background-color: #2F80ED50;
 }
+
 .filterItem.hobbies.selected {
   background-color: #2F80ED;
 }
@@ -44,19 +50,20 @@
 .filterItem.travel {
   background-color: #F2994A50;
 }
+
 .filterItem.travel.selected {
   background-color: #F2994A;
 }
 
 .filterItem {
-  margin-end: 6px;
-  padding: 6px 12px; 
+  margin-right: 4px;
+  padding: 6px 12px;
   min-width: 100px;
   border-radius: 48px;
   font-size: 14px;
   color: #787878;
-  border: none; 
-  cursor: pointer; 
+  border: none;
+  cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
@@ -65,14 +72,15 @@
   font-weight: 600;
 }
 
-.filterItem:hover, .filterItem.selected:hover{
+.filterItem:hover,
+.filterItem.selected:hover {
   filter: brightness(0.8);
 }
 
 .closeButton {
-  position: fixed; 
+  position: fixed;
   bottom: 10px;
-  right: 10px; 
+  right: 10px;
   background-color: transparent;
   border: none;
   padding: 10px 20px;

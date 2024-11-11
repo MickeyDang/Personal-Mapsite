@@ -39,7 +39,7 @@ const SelectedMomentModal: React.FC<SelectedMomentModalProps> = ({
       <div className={styles.buttonContainer}>
         {events.length > 1 && (
           <button className={styles.pinButton} onClick={handlePrev}>
-            {"<"}
+            <img src="/prev.png" width={24} height={24} alt="Previous" />
           </button>
         )}
         <div className={imageStyle}>
@@ -54,7 +54,7 @@ const SelectedMomentModal: React.FC<SelectedMomentModalProps> = ({
         </div>
         {events.length > 1 && (
           <button className={styles.pinButton} onClick={handleNext}>
-            {">"}
+            <img src="/next.png" width={24} height={24} alt="Next" />
           </button>
         )}
       </div>

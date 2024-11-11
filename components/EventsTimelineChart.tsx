@@ -1,5 +1,5 @@
 import React from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Label } from "recharts";
 import { format } from "date-fns";
 import { CombinedTimelineModel } from "../data/types";
 import styles from "../styles/EventsTimelineChart.module.css";
@@ -28,7 +28,7 @@ const EventsTimelineChart: React.FC<BarChartProps> = ({
 }) => {
   const barColor = "#FF7262";
   const selectedBarColor = "#CC1400";
-  
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart
@@ -46,9 +46,9 @@ const EventsTimelineChart: React.FC<BarChartProps> = ({
           scale="time"
           domain={["auto", "auto"]}
           tickFormatter={(date) => format(date, "MMM yyyy")}
-          tick={{ fill: "#343434" }}
+          tick={{ fill: "#343434", fontFamily: "Roboto, sans-serif" }}
         />
-        <YAxis tick={{ fill: "#343434" }} />
+        <YAxis tick={{ fill: "#343434", fontFamily: "Roboto, sans-serif" }} />
         <Tooltip content={({ payload }) => <CustomTooltip payload={payload} />} />
         <Bar
           dataKey="numEvents"

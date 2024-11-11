@@ -1,7 +1,7 @@
 :root {
   --primary-text-color: #787878;
   --primary-text-color-dark: #343434;
-  --primary-color: #FF7262; 
+  --primary-color: #FF7262;
   --primary-color-dark: #F24E1E;
   --primary-color-light: #FF7262;
 }
@@ -12,7 +12,16 @@ a {
   text-decoration: none;
 }
 
-p, h1, h2, h3, span, label, button, input, li {
+p,
+h1,
+h2,
+h3,
+span,
+label,
+button,
+input,
+li,
+text {
   font-family: 'Roboto', sans-serif;
   color: var(--primary-text-color);
 }

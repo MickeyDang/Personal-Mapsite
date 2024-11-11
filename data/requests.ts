@@ -21,6 +21,10 @@ export const fetchImageUrls = async (photoPointerSrc: String) => {
 
 export const convertResponseToEventModel = (data) => {
   const moments: EventModel[] = data.map((e) => {
+    if (!e.fields.Date || !e.fields.Title || !e.fields.Latitude || !e.fields.Longitude) {
+      return;
+    }
+
     return {
       title: e.fields.Title,
       latitude: e.fields.Latitude.toFixed(8) as number,

@@ -7,20 +7,23 @@
   align-items: flex-start;
   justify-content: flex-start;
   overflow-y: scroll;
+  border-radius: 4px;
 }
 
 .row {
   text-align: start;
   background: none;
   border: none;
+  border-radius: 2px;
   font: inherit;
-  cursor: pointer; 
+  cursor: pointer;
   padding-left: 6px;
   padding-right: 6px;
 }
 
 .row:hover {
   background-color: #F2F2F2;
+  border-radius: 2px;
 }
 
 .selectorText {
