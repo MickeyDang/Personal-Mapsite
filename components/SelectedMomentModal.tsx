@@ -23,9 +23,11 @@ const SelectedMomentModal: React.FC<SelectedMomentModalProps> = ({
     ? styles.litPreviewGrid
     : expandedImageUrls.length > 4
       ? styles.photoGrid6x
-      : expandedImageUrls.length > 1
+      : expandedImageUrls.length > 3
         ? styles.photoGrid4x
-        : styles.photoGrid1x;
+        : expandedImageUrls.length > 1
+          ? styles.photoGrid3x
+          : styles.photoGrid1x;
 
   const containerStyle = events[idx].tags.includes(Tag.Literature)
     ? styles.expandedLitPreviews
