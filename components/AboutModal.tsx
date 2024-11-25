@@ -23,12 +23,10 @@ const AboutModal: React.FC = () => {
         .
       </p>
       <p>
-        Each item in the list is represented both as a pin on a map and as a
-        point on my timeline.
+        Each item in the list is represented both as a pin on the map and a point on the timeline.
       </p>
       <p>
-        Feel free to explore those little moments which I&apos;ve curated
-        through space and time.
+        Feel free to explore these curated moments through space and time... literally & figuratively.
       </p>
       <span className={styles.aboutTools}>
         Made in 🇨🇦 with Typescript, Next.js, Mapbox, and Airtable.
