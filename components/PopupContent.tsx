@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { EventModel } from "../data/types";
 import MomentSelector from "./MomentSelector";
 
@@ -20,6 +20,10 @@ const PopupContent: React.FC<PopupContentProps> = ({
     onMomentSelected(moment);
   };
 
+  useEffect(() => {
+    if (events.length === 1) handleMomentSelected(events[0].title);
+  });
+  
   return (
     <MomentSelector events={events} onMomentSelected={handleMomentSelected} />
   );
