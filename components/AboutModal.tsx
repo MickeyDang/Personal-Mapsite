@@ -4,6 +4,13 @@ import styles from "../styles/AboutModal.module.css";
 const AboutModal: React.FC = () => {
   return (
     <div className={styles.aboutModal}>
+      <div>
+        <img
+          src="./MickeyHeadshot.jpg"
+          alt="Mickey"
+          className={styles.profileImage}
+        />
+      </div>
       <h3>Hi there!</h3>
       <p>
         Ever since entering university, I&apos;ve always had a soft spot for
