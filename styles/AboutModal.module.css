@@ -5,15 +5,23 @@
   transform: translate(-50%, -50%);
   background-color: #ffffff;
   padding: 24px;
-  width: 50%;
+  width: 60%;
   max-height: 50%;
   border-radius: 6px;
   z-index: 1000;
   overflow-y: scroll;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .aboutTools {
   font-size: 0.75rem;
+}
+
+.textSection {
+  flex-direction: column;
+  margin-left: 24px;
 }
 
 .profileImage {
