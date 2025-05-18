@@ -37,7 +37,7 @@ const TopBar: React.FC<TopBarProps> = ({
       </div>
       <div className={styles.meSection}>
         <img
-          src="./MickeyBoston.jpg"
+          src="./MickeyHeadshot.jpg"
           alt="Mickey"
           className={styles.profileImage}
         />
