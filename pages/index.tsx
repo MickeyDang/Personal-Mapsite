@@ -15,7 +15,6 @@ import {
 } from "../data/types";
 import { convertResponseToEventModel, fetchImageUrls } from "../data/requests";
 import {
-  compareMapModelLatLng,
   compareMarkerLatLng,
   configureMarkerColour,
   removePopups,
