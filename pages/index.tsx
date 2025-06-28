@@ -38,7 +38,17 @@ const Home: NextPage = () => {
 
   // Cached Data
   const cachedEvents: React.MutableRefObject<EventModel[]> = useRef(null);
-  //TODO: on each change to the event model, cache the mappings of titles and (LatLng) to event & map models, removing searching
+  
+  // Cache for optimized lookups
+  const eventCache = useRef<{
+    titleToEventIndex: Map<string, number>;
+    latlngToMapModel: Map<string, CombinedMapModel>;
+    timeToTimelineIndex: Map<number, number>;
+  }>({
+    titleToEventIndex: new Map(),
+    latlngToMapModel: new Map(),
+    timeToTimelineIndex: new Map(),
+  });
 
   // Filtering
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
@@ -153,6 +163,36 @@ const Home: NextPage = () => {
       populateEventModels();
     };
 
+    const buildEventCache = (
+      events: EventModel[],
+      mapModels: CombinedMapModel[],
+      timelineModels: CombinedTimelineModel[]
+    ) => {
+      const cache = eventCache.current;
+      
+      // Clear existing cache
+      cache.titleToEventIndex.clear();
+      cache.latlngToMapModel.clear();
+      cache.timeToTimelineIndex.clear();
+      
+      // Build title to event index mapping
+      events.forEach((event, index) => {
+        cache.titleToEventIndex.set(event.title, index);
+      });
+      
+      // Build LatLng to map model mapping
+      mapModels.forEach((mapModel) => {
+        const latlngKey = `${mapModel.longitude},${mapModel.latitude}`;
+        cache.latlngToMapModel.set(latlngKey, mapModel);
+      });
+      
+      // Build time to timeline index mapping
+      timelineModels.forEach((timelineModel, index) => {
+        const timeKey = timelineModel.barTime.getTime();
+        cache.timeToTimelineIndex.set(timeKey, index);
+      });
+    };
+
     const populateEventModels = () => {
       const selectedTags = mapStringToTag(selectedFilters);
 
@@ -165,9 +205,15 @@ const Home: NextPage = () => {
         },
       );
 
+      const mapModels = combineToMapFormat(moments);
+      const timelineModels = combineToTimelineFormat(moments);
+      
       setEventsModel(moments);
-      setEventsMapModel(combineToMapFormat(moments));
-      setEventsTimelineModel(combineToTimelineFormat(moments));
+      setEventsMapModel(mapModels);
+      setEventsTimelineModel(timelineModels);
+      
+      // Build cache after models are created
+      buildEventCache(moments, mapModels, timelineModels);
     };
 
     const fetchToken = async () => {
