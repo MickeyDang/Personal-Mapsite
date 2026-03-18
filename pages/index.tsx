@@ -15,7 +15,6 @@ import {
 } from "../data/types";
 import { convertResponseToEventModel, fetchImageUrls } from "../data/requests";
 import {
-  compareMapModelLatLng,
   compareMarkerLatLng,
   configureMarkerColour,
   removePopups,
@@ -38,7 +37,17 @@ const Home: NextPage = () => {
 
   // Cached Data
   const cachedEvents: React.MutableRefObject<EventModel[]> = useRef(null);
-  //TODO: on each change to the event model, cache the mappings of titles and (LatLng) to event & map models, removing searching
+  
+  // Cache for optimized lookups
+  const eventCache = useRef<{
+    titleToEventIndex: Map<string, number>;
+    latlngToMapModel: Map<string, CombinedMapModel>;
+    timeToTimelineIndex: Map<number, number>;
+  }>({
+    titleToEventIndex: new Map(),
+    latlngToMapModel: new Map(),
+    timeToTimelineIndex: new Map(),
+  });
 
   // Filtering
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
@@ -86,15 +95,20 @@ const Home: NextPage = () => {
   };
 
   const handleMomentSelectedFromPopup = async (moment: EventModel) => {
-    const index = eventsModel.findIndex(
-      (value: EventModel) => value.title === moment.title,
-    );
+    const index = eventCache.current?.titleToEventIndex.get(moment.title);
+    if (index === undefined) {
+      console.warn(`Event not found in cache: ${moment.title}`);
+      return;
+    }
 
     const candidateEvent = eventsModel[index];
 
-    const eventStack = eventsMapModel.find((eventMapModel) =>
-      compareMapModelLatLng(eventMapModel, candidateEvent),
-    );
+    const latlngKey = `${candidateEvent.longitude},${candidateEvent.latitude}`;
+    const eventStack = eventCache.current?.latlngToMapModel.get(latlngKey);
+    if (!eventStack) {
+      console.warn(`Event stack not found in cache for: ${latlngKey}`);
+      return;
+    }
     const eventStackId = eventStack.events.findIndex(
       (event) => event.title === candidateEvent.title,
     );
@@ -153,6 +167,36 @@ const Home: NextPage = () => {
       populateEventModels();
     };
 
+    const buildEventCache = (
+      events: EventModel[],
+      mapModels: CombinedMapModel[],
+      timelineModels: CombinedTimelineModel[]
+    ) => {
+      const cache = eventCache.current;
+      
+      // Clear existing cache
+      cache.titleToEventIndex.clear();
+      cache.latlngToMapModel.clear();
+      cache.timeToTimelineIndex.clear();
+      
+      // Build title to event index mapping
+      events.forEach((event, index) => {
+        cache.titleToEventIndex.set(event.title, index);
+      });
+      
+      // Build LatLng to map model mapping
+      mapModels.forEach((mapModel) => {
+        const latlngKey = `${mapModel.longitude},${mapModel.latitude}`;
+        cache.latlngToMapModel.set(latlngKey, mapModel);
+      });
+      
+      // Build time to timeline index mapping
+      timelineModels.forEach((timelineModel, index) => {
+        const timeKey = timelineModel.barTime.getTime();
+        cache.timeToTimelineIndex.set(timeKey, index);
+      });
+    };
+
     const populateEventModels = () => {
       const selectedTags = mapStringToTag(selectedFilters);
 
@@ -165,9 +209,15 @@ const Home: NextPage = () => {
         },
       );
 
+      const mapModels = combineToMapFormat(moments);
+      const timelineModels = combineToTimelineFormat(moments);
+      
       setEventsModel(moments);
-      setEventsMapModel(combineToMapFormat(moments));
-      setEventsTimelineModel(combineToTimelineFormat(moments));
+      setEventsMapModel(mapModels);
+      setEventsTimelineModel(timelineModels);
+      
+      // Build cache after models are created
+      buildEventCache(moments, mapModels, timelineModels);
     };
 
     const fetchToken = async () => {
@@ -216,10 +266,15 @@ const Home: NextPage = () => {
 
       mapMarker.getElement().addEventListener("click", (event) => {
         event.stopPropagation();
-        const index = eventsModel.findIndex((value) =>
-          compareMapModelLatLng(eventMapModel, value),
-        );
-        setSelectedEventIdx(index);
+        const latlngKey = `${eventMapModel.longitude},${eventMapModel.latitude}`;
+        const cachedMapModel = eventCache.current?.latlngToMapModel.get(latlngKey);
+        const index = cachedMapModel?.events[0] ? 
+          eventCache.current?.titleToEventIndex.get(cachedMapModel.events[0].title) : 
+          undefined;
+        
+        if (index !== undefined) {
+          setSelectedEventIdx(index);
+        }
       });
 
       mapMarkers.current.push(mapMarker);
@@ -237,9 +292,9 @@ const Home: NextPage = () => {
     const map = mapRef.current;
     if (!map) return;
 
-    const eventMapModel = eventsMapModel.find((value: CombinedMapModel) =>
-      compareMapModelLatLng(value, eventsModel[selectedEventIdx]),
-    );
+    const selectedEvent = eventsModel[selectedEventIdx];
+    const latlngKey = `${selectedEvent.longitude},${selectedEvent.latitude}`;
+    const eventMapModel = eventCache.current?.latlngToMapModel.get(latlngKey);
     if (!eventMapModel) return;
 
     const mapMarker = mapMarkers.current.find((value: mapboxgl.Marker) =>
@@ -277,9 +332,7 @@ const Home: NextPage = () => {
     const candidateBarTime = createBarTimeFromEvent(
       eventsModel[selectedEventIdx],
     );
-    const eventsTimelineIndex = eventsTimelineModel.findIndex((value) => {
-      return value.barTime.getTime() == candidateBarTime.getTime();
-    });
+    const eventsTimelineIndex = eventCache.current?.timeToTimelineIndex.get(candidateBarTime.getTime()) ?? -1;
     setSelectedBarIndex(eventsTimelineIndex);
   }, [selectedEventIdx]);
 
