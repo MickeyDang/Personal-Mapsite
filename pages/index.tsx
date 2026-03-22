@@ -22,6 +22,8 @@ import {
 import SelectedMomentModal from "../components/SelectedMomentModal";
 import TopBar from "../components/TopBar";
 import EventsTimelineChart from "../components/EventsTimelineChart";
+import AIMapComponent from "../components/AIMapComponent";
+import AITimelineChart from "../components/AITimelineChart";
 
 const Home: NextPage = () => {
   // Event Model Setup
@@ -49,6 +51,9 @@ const Home: NextPage = () => {
     timeToTimelineIndex: new Map(),
   });
 
+  // AI Mode
+  const [aiMode, setAiMode] = useState(false);
+
   // Filtering
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
@@ -65,6 +70,10 @@ const Home: NextPage = () => {
 
   const handleFiltersSelected = (selectedFilters: string[]) => {
     setSelectedFilters(selectedFilters);
+  };
+
+  const handleAiMomentSelected = async (moment: EventModel) => {
+    await handleMomentSelectedFromPopup(moment);
   };
 
   const handleNext = () => {
@@ -287,12 +296,13 @@ const Home: NextPage = () => {
     }
   }, [eventsModel, mapboxAccessToken]);
 
-  // Handle camera movement and popup upon a selected moment
+  // Handle camera movement and popup upon a selected moment (regular map)
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
+    if (!map || aiMode) return;
 
     const selectedEvent = eventsModel[selectedEventIdx];
+    if (!selectedEvent) return;
     const latlngKey = `${selectedEvent.longitude},${selectedEvent.latitude}`;
     const eventMapModel = eventCache.current?.latlngToMapModel.get(latlngKey);
     if (!eventMapModel) return;
@@ -327,11 +337,13 @@ const Home: NextPage = () => {
         onMomentSelected={handleMomentSelectedFromPopup}
       />,
     );
+  }, [selectedEventIdx, aiMode]);
 
-    // Update selected bar in the timeline
-    const candidateBarTime = createBarTimeFromEvent(
-      eventsModel[selectedEventIdx],
-    );
+  // Update selected bar in the timeline (works in both modes)
+  useEffect(() => {
+    const selectedEvent = eventsModel[selectedEventIdx];
+    if (!selectedEvent) return;
+    const candidateBarTime = createBarTimeFromEvent(selectedEvent);
     const eventsTimelineIndex = eventCache.current?.timeToTimelineIndex.get(candidateBarTime.getTime()) ?? -1;
     setSelectedBarIndex(eventsTimelineIndex);
   }, [selectedEventIdx]);
@@ -341,6 +353,8 @@ const Home: NextPage = () => {
       <TopBar
         onFiltersSelected={handleFiltersSelected}
         initialFilters={selectedFilters}
+        aiMode={aiMode}
+        onAiModeToggle={setAiMode}
       />
       {expandedImageUrls && expandedImageUrls.length > 0 && (
         <>
@@ -358,23 +372,57 @@ const Home: NextPage = () => {
         </>
       )}
       <div className={styles.pageContainer}>
-        <div ref={mapContainer} className={styles.mapContainer} />
+        {/* Regular map - always mounted to preserve Mapbox state, hidden in AI mode */}
+        <div
+          ref={mapContainer}
+          className={styles.mapContainer}
+          style={{ display: aiMode ? "none" : "block" }}
+        />
+        {/* AI map - only mounted when in AI mode */}
+        {aiMode && (
+          <AIMapComponent
+            eventsMapModel={eventsMapModel}
+            mapboxAccessToken={mapboxAccessToken}
+            onMomentSelected={handleAiMomentSelected}
+            selectedEvent={eventsModel[selectedEventIdx]}
+          />
+        )}
         <div className={styles.timelineContainer}>
+          {aiMode && (
+            <button className={styles.scrubButton} onClick={handlePrev}>
+              <img src="/prev.png" width={16} height={16} alt="Previous" />
+            </button>
+          )}
           <div className={styles.chartContainer}>
-            <EventsTimelineChart
-              data={eventsTimelineModel}
-              handleBarClick={handleBarClick}
-              selectedBarIndex={selectedBarIndex}
-            />
+            {aiMode ? (
+              <AITimelineChart
+                data={eventsTimelineModel}
+                handleBarClick={handleBarClick}
+                selectedBarIndex={selectedBarIndex}
+              />
+            ) : (
+              <EventsTimelineChart
+                data={eventsTimelineModel}
+                handleBarClick={handleBarClick}
+                selectedBarIndex={selectedBarIndex}
+              />
+            )}
           </div>
-          <div className={styles.buttonContainer}>
-            <button className={styles.pinButton} onClick={handlePrev}>
-              <img src="/prev.png" width={24} height={24} alt="Previous" />
+          {aiMode && (
+            <button className={styles.scrubButton} onClick={handleNext}>
+              <img src="/next.png" width={16} height={16} alt="Next" />
             </button>
-            <button className={styles.pinButton} onClick={handleNext}>
-              <img src="/next.png" width={24} height={24} alt="Next" />
-            </button>
-          </div>
+          )}
+          {!aiMode && (
+            <div className={styles.buttonContainer}>
+              <button className={styles.pinButton} onClick={handlePrev}>
+                <img src="/prev.png" width={24} height={24} alt="Previous" />
+              </button>
+              <button className={styles.pinButton} onClick={handleNext}>
+                <img src="/next.png" width={24} height={24} alt="Next" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </>

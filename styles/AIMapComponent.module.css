@@ -1,0 +1,136 @@
+.mapContainer {
+  width: 99vw;
+  height: 70vh;
+}
+
+.markerWrapper {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.markerContainer {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imageCard {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 2px solid white;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  background: white;
+}
+
+/* By default, stack all cards on top of each other with slight offset */
+.markerContainer .imageCard {
+  transform: translate(0, 0);
+  z-index: 1;
+}
+
+.markerContainer .imageCard:nth-child(n+2) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* On hover of the WRAPPER (stable hitbox), fan out the cards */
+.markerWrapper:hover .markerContainer {
+  z-index: 9999;
+}
+
+.markerWrapper:hover .markerContainer .imageCard {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.markerWrapper:hover .markerContainer .imageCard:nth-child(1) {
+  transform: translate(0, 0);
+  z-index: 10;
+}
+
+.markerWrapper:hover .markerContainer .imageCard:nth-child(2) {
+  transform: translate(60px, 0);
+  z-index: 9;
+}
+
+.markerWrapper:hover .markerContainer .imageCard:nth-child(3) {
+  transform: translate(-60px, 0);
+  z-index: 8;
+}
+
+.markerWrapper:hover .markerContainer .imageCard:nth-child(4) {
+  transform: translate(0, -60px);
+  z-index: 7;
+}
+
+.markerWrapper:hover .markerContainer .imageCard:nth-child(5) {
+  transform: translate(0, 60px);
+  z-index: 6;
+}
+
+.markerWrapper:hover .markerContainer .imageCard:nth-child(6) {
+  transform: translate(60px, -60px);
+  z-index: 5;
+}
+
+.markerWrapper:hover .markerContainer .imageCard:nth-child(7) {
+  transform: translate(-60px, -60px);
+  z-index: 4;
+}
+
+.markerWrapper:hover .markerContainer .imageCard:nth-child(8) {
+  transform: translate(60px, 60px);
+  z-index: 3;
+}
+
+.markerWrapper:hover .markerContainer .imageCard:nth-child(9) {
+  transform: translate(-60px, 60px);
+  z-index: 2;
+}
+
+.markerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fallbackDot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.countBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #FF7262;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  border: 2px solid white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  font-family: Roboto, sans-serif;
+  pointer-events: none;
+}

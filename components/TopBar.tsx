@@ -7,11 +7,15 @@ import AboutModal from "./AboutModal";
 interface TopBarProps {
   onFiltersSelected: (selectedFilters: string[]) => void;
   initialFilters: string[];
+  aiMode: boolean;
+  onAiModeToggle: (enabled: boolean) => void;
 }
 
 const TopBar: React.FC<TopBarProps> = ({
   onFiltersSelected,
   initialFilters,
+  aiMode,
+  onAiModeToggle,
 }) => {
   const [showAboutModal, setShowAboutModal] = useState(true);
 
@@ -42,6 +46,17 @@ const TopBar: React.FC<TopBarProps> = ({
           className={styles.profileImage}
         />
         <h3>Mickey</h3>
+      </div>
+      <div className={styles.aiToggleSection}>
+        <span className={styles.toggleLabel}>AI</span>
+        <label className={styles.toggleSwitch}>
+          <input
+            type="checkbox"
+            checked={aiMode}
+            onChange={(e) => onAiModeToggle(e.target.checked)}
+          />
+          <span className={styles.toggleSlider}></span>
+        </label>
       </div>
       <div className={styles.aboutSection}>
         <button className={styles.topBarButton} onClick={handleAboutModalOpen}>
