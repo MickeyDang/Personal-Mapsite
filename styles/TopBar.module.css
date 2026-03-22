@@ -95,7 +95,7 @@
 .toggleLabel {
   font-size: 14px;
   color: var(--primary-text-color-dark);
-  font-family: inherit;
+  font-family: Roboto, sans-serif;
   cursor: default;
   user-select: none;
 }

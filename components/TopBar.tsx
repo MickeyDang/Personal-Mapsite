@@ -48,6 +48,7 @@ const TopBar: React.FC<TopBarProps> = ({
         <h3>Mickey</h3>
       </div>
       <div className={styles.aiToggleSection}>
+        <span className={styles.toggleLabel}>AI</span>
         <label className={styles.toggleSwitch}>
           <input
             type="checkbox"
@@ -56,7 +57,6 @@ const TopBar: React.FC<TopBarProps> = ({
           />
           <span className={styles.toggleSlider}></span>
         </label>
-        <span className={styles.toggleLabel}>AI</span>
       </div>
       <div className={styles.aboutSection}>
         <button className={styles.topBarButton} onClick={handleAboutModalOpen}>
