@@ -296,12 +296,13 @@ const Home: NextPage = () => {
     }
   }, [eventsModel, mapboxAccessToken]);
 
-  // Handle camera movement and popup upon a selected moment
+  // Handle camera movement and popup upon a selected moment (regular map)
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
+    if (!map || aiMode) return;
 
     const selectedEvent = eventsModel[selectedEventIdx];
+    if (!selectedEvent) return;
     const latlngKey = `${selectedEvent.longitude},${selectedEvent.latitude}`;
     const eventMapModel = eventCache.current?.latlngToMapModel.get(latlngKey);
     if (!eventMapModel) return;
@@ -336,11 +337,13 @@ const Home: NextPage = () => {
         onMomentSelected={handleMomentSelectedFromPopup}
       />,
     );
+  }, [selectedEventIdx, aiMode]);
 
-    // Update selected bar in the timeline
-    const candidateBarTime = createBarTimeFromEvent(
-      eventsModel[selectedEventIdx],
-    );
+  // Update selected bar in the timeline (works in both modes)
+  useEffect(() => {
+    const selectedEvent = eventsModel[selectedEventIdx];
+    if (!selectedEvent) return;
+    const candidateBarTime = createBarTimeFromEvent(selectedEvent);
     const eventsTimelineIndex = eventCache.current?.timeToTimelineIndex.get(candidateBarTime.getTime()) ?? -1;
     setSelectedBarIndex(eventsTimelineIndex);
   }, [selectedEventIdx]);
@@ -381,9 +384,15 @@ const Home: NextPage = () => {
             eventsMapModel={eventsMapModel}
             mapboxAccessToken={mapboxAccessToken}
             onMomentSelected={handleAiMomentSelected}
+            selectedEvent={eventsModel[selectedEventIdx]}
           />
         )}
         <div className={styles.timelineContainer}>
+          {aiMode && (
+            <button className={styles.scrubButton} onClick={handlePrev}>
+              <img src="/prev.png" width={16} height={16} alt="Previous" />
+            </button>
+          )}
           <div className={styles.chartContainer}>
             {aiMode ? (
               <AITimelineChart
@@ -399,6 +408,11 @@ const Home: NextPage = () => {
               />
             )}
           </div>
+          {aiMode && (
+            <button className={styles.scrubButton} onClick={handleNext}>
+              <img src="/next.png" width={16} height={16} alt="Next" />
+            </button>
+          )}
           {!aiMode && (
             <div className={styles.buttonContainer}>
               <button className={styles.pinButton} onClick={handlePrev}>

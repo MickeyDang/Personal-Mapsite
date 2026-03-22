@@ -8,12 +8,14 @@ interface AIMapComponentProps {
   eventsMapModel: CombinedMapModel[];
   mapboxAccessToken: string;
   onMomentSelected: (moment: EventModel) => void;
+  selectedEvent?: EventModel;
 }
 
 const AIMapComponent: React.FC<AIMapComponentProps> = ({
   eventsMapModel,
   mapboxAccessToken,
   onMomentSelected,
+  selectedEvent,
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -188,6 +190,17 @@ const AIMapComponent: React.FC<AIMapComponentProps> = ({
 
     addMarkers();
   }, [eventsMapModel, createMarkerElement, fetchAndCacheImages]);
+
+  // Fly camera when selected event changes (e.g. scrub buttons)
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !selectedEvent) return;
+
+    map.flyTo({
+      center: [selectedEvent.longitude, selectedEvent.latitude],
+      zoom: 11,
+    });
+  }, [selectedEvent]);
 
   return <div ref={mapContainer} className={styles.mapContainer} />;
 };
