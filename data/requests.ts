@@ -1,12 +1,15 @@
 import { EventModel, mapStringToTag } from "./types";
 
-export const fetchImageUrls = async (photoPointerSrc: String) => {
+export const fetchImageUrls = async (
+  photoPointerSrc: String,
+  { thumbnails = false } = {},
+) => {
   try {
     const response = await fetch(`/api/image?key=${photoPointerSrc}`);
     if (response.status == 200) {
       const data = await response.json();
       if (data) {
-        return data.imageUrls;
+        return (thumbnails && data.thumbnailUrls) || data.imageUrls;
       } else {
         return [];
       }

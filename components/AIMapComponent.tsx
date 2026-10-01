@@ -22,12 +22,19 @@ const AIMapComponent: React.FC<AIMapComponentProps> = ({
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   const imageCache = useRef<Map<string, string[]>>(new Map());
 
+  // The parent passes a new callback every render; read it through a ref so
+  // markers aren't torn down and rebuilt (e.g. mid-flyTo) on each re-render.
+  const onMomentSelectedRef = useRef(onMomentSelected);
+  onMomentSelectedRef.current = onMomentSelected;
+
   const fetchAndCacheImages = useCallback(
     async (event: EventModel): Promise<string[]> => {
       const cached = imageCache.current.get(event.title);
       if (cached) return cached;
       try {
-        const urls = await fetchImageUrls(event.photoPointerSrc);
+        const urls = await fetchImageUrls(event.photoPointerSrc, {
+          thumbnails: true,
+        });
         if (urls && urls.length > 0) {
           imageCache.current.set(event.title, urls);
           return urls;
@@ -54,6 +61,7 @@ const AIMapComponent: React.FC<AIMapComponentProps> = ({
     img.alt = alt;
     img.className = styles.markerImage;
     img.draggable = false;
+    img.decoding = "async";
     const markLoaded = () => card.classList.remove(styles.loading);
     img.addEventListener("load", markLoaded, { once: true });
     img.addEventListener("error", markLoaded, { once: true });
@@ -90,7 +98,7 @@ const AIMapComponent: React.FC<AIMapComponentProps> = ({
       wrapper.addEventListener("click", (e) => {
         if (!wrapperTarget) return;
         e.stopPropagation();
-        onMomentSelected(wrapperTarget);
+        onMomentSelectedRef.current(wrapperTarget);
       });
 
       const populate = (allImageUrls: Map<string, string[]>) => {
@@ -138,7 +146,7 @@ const AIMapComponent: React.FC<AIMapComponentProps> = ({
           // Click on individual card opens that event's modal
           card.addEventListener("click", (e) => {
             e.stopPropagation();
-            onMomentSelected(item.event);
+            onMomentSelectedRef.current(item.event);
           });
 
           container.appendChild(card);
@@ -153,7 +161,7 @@ const AIMapComponent: React.FC<AIMapComponentProps> = ({
 
       return { element: wrapper, populate };
     },
-    [onMomentSelected, createImageCard],
+    [createImageCard],
   );
 
   // Initialize map
@@ -169,10 +177,24 @@ const AIMapComponent: React.FC<AIMapComponentProps> = ({
         center: [-80.52, 43.46],
         zoom: 2,
       });
+
+      // Freeze hover fan-out while the map is moving so dragging across pins
+      // doesn't kick off card animations and z-index churn mid-pan.
+      const container = mapContainer.current;
+      mapRef.current.on("movestart", () =>
+        container.classList.add(styles.moving),
+      );
+      mapRef.current.on("moveend", () =>
+        container.classList.remove(styles.moving),
+      );
     }
 
     return () => {
-      // Don't destroy map on cleanup - we reuse it
+      // This component unmounts whenever AI mode is toggled off, so release
+      // the map (and its WebGL context) instead of leaking one per toggle.
+      mapRef.current?.remove();
+      mapRef.current = null;
+      markersRef.current = [];
     };
   }, [mapboxAccessToken]);
 

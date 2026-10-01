@@ -3,6 +3,12 @@
   height: 70vh;
 }
 
+/* While panning/zooming, markers ignore the pointer so hover fan-out
+   can't trigger mid-drag */
+.moving .markerWrapper {
+  pointer-events: none;
+}
+
 .markerWrapper {
   width: 60px;
   height: 60px;
