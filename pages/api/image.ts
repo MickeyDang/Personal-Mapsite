@@ -29,22 +29,29 @@ export default async function handler(
       .all();
 
     const imageUrls = [];
-    
+    // Downsized (~512px) versions for small previews like the AI map pins
+    const thumbnailUrls = [];
+
     for (const record of records) {
       if (record.fields["File"]) {
         // Check if it's an array before iterating
         if (Array.isArray(record.fields["File"])) {
           for (const file of record.fields["File"]) {
             imageUrls.push(file.url);
+            thumbnailUrls.push(file.thumbnails?.large?.url ?? file.url);
           }
         } else {
           // If it's a single object, just push its url
           imageUrls.push(record.fields["File"][0].url);
+          thumbnailUrls.push(
+            record.fields["File"][0].thumbnails?.large?.url ??
+              record.fields["File"][0].url,
+          );
         }
       }
     }
 
-    res.status(200).json({ imageUrls });
+    res.status(200).json({ imageUrls, thumbnailUrls });
   } catch (error) {
     res.status(500).json({ error: `Failed to fetch data: ${error.message}` });
   }
