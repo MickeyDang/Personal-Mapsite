@@ -40,9 +40,9 @@ const AboutModal: React.FC = () => {
           Made in 🇨🇦 with Typescript, Next.js, Mapbox, and Airtable.
         </span>
         <span className={`${styles.aboutTools} ${styles.aboutAiNote}`}>
-          This site was built &quot;organically&quot; before 2022: hand-coded,
-          no coding agents. Toggle AI Mode to see the post-2025 version, built
-          with Claude Code.
+          NOTE: This site was built &quot;organically&quot; before 2022 (ie no
+          LLMs). But you can toggle &quot;AI&quot; to see the post-2025 version.
+          I kept the pre-LLM version out of tribute to a lost craft.
         </span>
       </div>
       
