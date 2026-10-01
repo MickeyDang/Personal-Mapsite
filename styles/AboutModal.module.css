@@ -19,6 +19,12 @@
   font-size: 0.75rem;
 }
 
+.aboutAiNote {
+  display: block;
+  margin-top: 8px;
+  color: #757575;
+}
+
 .textSection {
   flex-direction: column;
   margin-left: 24px;
